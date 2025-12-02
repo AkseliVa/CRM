@@ -1,0 +1,32 @@
+package org.example.crm.controllers;
+
+import org.example.crm.entities.Company;
+import org.example.crm.repositories.CompanyRepository;
+import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
+import java.util.Optional;
+
+@RestController
+public class CompanyController {
+    private final CompanyRepository companyRepository;
+
+    public CompanyController(CompanyRepository companyRepository) {
+        this.companyRepository = companyRepository;
+    }
+
+    @GetMapping("/api/company")
+    public List<Company> getCompanies() {
+        return companyRepository.findAll();
+    }
+
+    @GetMapping("/api/company/{id}")
+    public Optional<Company> getCompany(@PathVariable Long id) {
+        return companyRepository.findById(id);
+    }
+
+    @PostMapping("/api/company")
+    public Company createCompany(@RequestBody Company company) {
+        return companyRepository.save(company);
+    }
+}

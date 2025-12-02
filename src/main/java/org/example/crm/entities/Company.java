@@ -33,4 +33,9 @@ public class Company {
         this.created_at = created_at;
         this.updated_at = updated_at;
     };
+
+    public Company(String name, CompanyIndustryType industry) {
+        this.name = name;
+        this.industry = industry;
+    }
 }
