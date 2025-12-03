@@ -32,4 +32,20 @@ public class TicketController {
         ticket.setUpdated_at(LocalDateTime.now());
         return ticketRepository.save(ticket);
     };
+
+    @PutMapping("/api/ticket/{id}")
+    public Ticket updateTicket(@PathVariable Long id, @RequestBody Ticket ticket) {
+        Ticket updatedTicket = ticketRepository.findById(id).orElse(null);
+
+        updatedTicket.setTitle(ticket.getTitle());
+        updatedTicket.setDescription(ticket.getDescription());
+        updatedTicket.setPriority(ticket.getPriority());
+        updatedTicket.setStatus(ticket.getStatus());
+        updatedTicket.setUpdated_at(ticket.getUpdated_at());
+        updatedTicket.setAssignedUser(ticket.getAssignedUser());
+        updatedTicket.setCompany(ticket.getCompany());
+        updatedTicket.setCustomer(ticket.getCustomer());
+
+        return ticketRepository.save(updatedTicket);
+    }
 }

@@ -32,4 +32,15 @@ public class UserController {
         user.setUpdated_at(LocalDateTime.now());
         return userRepository.save(user);
     };
+
+    @PutMapping("/api/user/{id}")
+    public User updateUser(@PathVariable Long id, @RequestBody User user) {
+        User updatedUser = userRepository.findById(id).orElse(null);
+
+        updatedUser.setEmail(user.getEmail());
+        updatedUser.setPasswordHash(user.getPasswordHash());
+        updatedUser.setUpdated_at(LocalDateTime.now());
+
+        return userRepository.save(updatedUser);
+    }
 }

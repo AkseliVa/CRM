@@ -32,4 +32,17 @@ public class CustomerController {
         customer.setUpdated_at(LocalDateTime.now());
         return customerRepository.save(customer);
     };
+
+    @PutMapping("/api/customer/{id}")
+    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
+        Customer updatedCustomer = customerRepository.findById(id).orElse(null);
+
+        updatedCustomer.setCompany(customer.getCompany());
+        updatedCustomer.setName(customer.getName());
+        updatedCustomer.setEmail(customer.getEmail());
+        updatedCustomer.setPhone(customer.getPhone());
+        updatedCustomer.setUpdated_at(LocalDateTime.now());
+
+        return customerRepository.save(updatedCustomer);
+    }
 }
