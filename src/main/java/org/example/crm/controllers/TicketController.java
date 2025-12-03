@@ -4,6 +4,7 @@ import org.example.crm.entities.Ticket;
 import org.example.crm.repositories.TicketRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,8 @@ public class TicketController {
 
     @PostMapping("/api/ticket")
     public Ticket createTicket(@RequestBody Ticket ticket) {
+        ticket.setCreated_at(LocalDateTime.now());
+        ticket.setUpdated_at(LocalDateTime.now());
         return ticketRepository.save(ticket);
     };
 }

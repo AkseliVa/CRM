@@ -4,6 +4,7 @@ import org.example.crm.entities.User;
 import org.example.crm.repositories.UserRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,8 @@ public class UserController {
 
     @PostMapping("/api/user")
     public User createUser(@RequestBody User user) {
+        user.setCreated_at(LocalDateTime.now());
+        user.setUpdated_at(LocalDateTime.now());
         return userRepository.save(user);
     };
 }

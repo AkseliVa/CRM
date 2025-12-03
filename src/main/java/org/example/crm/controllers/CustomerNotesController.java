@@ -4,6 +4,7 @@ import org.example.crm.entities.CustomerNotes;
 import org.example.crm.repositories.CustomerNotesRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,8 @@ public class CustomerNotesController {
 
     @PostMapping("/api/customer_notes")
     public CustomerNotes createCustomerNotes(@RequestBody CustomerNotes customerNotes) {
+        customerNotes.setCreated_at(LocalDateTime.now());
+        customerNotes.setUpdated_at(LocalDateTime.now());
         return customerNotesRepository.save(customerNotes);
     }
 }

@@ -4,6 +4,7 @@ import org.example.crm.entities.Company;
 import org.example.crm.repositories.CompanyRepository;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
 
@@ -27,6 +28,8 @@ public class CompanyController {
 
     @PostMapping("/api/company")
     public Company createCompany(@RequestBody Company company) {
+        company.setCreated_at(LocalDateTime.now());
+        company.setUpdated_at(LocalDateTime.now());
         return companyRepository.save(company);
     }
 }
