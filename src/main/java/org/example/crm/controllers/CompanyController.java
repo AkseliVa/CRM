@@ -32,4 +32,15 @@ public class CompanyController {
         company.setUpdated_at(LocalDateTime.now());
         return companyRepository.save(company);
     }
+
+    @PutMapping("/api/company/{id}")
+    public Company updateCompany(@PathVariable Long id, @RequestBody Company updatedCompany) {
+        Company oldCompany = companyRepository.findById(id).orElse(null);
+
+        oldCompany.setName(updatedCompany.getName());
+        oldCompany.setIndustry(updatedCompany.getIndustry());
+        oldCompany.setUpdated_at(LocalDateTime.now());
+
+        return companyRepository.save(oldCompany);
+    }
 }
