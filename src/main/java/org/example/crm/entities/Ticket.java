@@ -27,9 +27,9 @@ public class Ticket {
     @Enumerated(EnumType.STRING)
     private TicketStatus status;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     @ManyToOne
     @JoinColumn(name="company_id")
@@ -45,12 +45,12 @@ public class Ticket {
 
     public Ticket() {};
 
-    public Ticket(String title, String description, TicketPriority priority, TicketStatus status, LocalDateTime created_at, LocalDateTime updated_at) {
+    public Ticket(String title, String description, TicketPriority priority, TicketStatus status, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.title = title;
         this.description = description;
         this.priority = priority;
         this.status = status;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     };
 }

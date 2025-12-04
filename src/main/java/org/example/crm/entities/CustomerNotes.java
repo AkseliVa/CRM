@@ -25,17 +25,17 @@ public class CustomerNotes {
 
     private String content;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     public CustomerNotes() {};
 
-    public CustomerNotes(Customer customer, User user, String content, LocalDateTime created_at, LocalDateTime updated_at) {
+    public CustomerNotes(Customer customer, User user, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.customer = customer;
         this.user = user;
         this.content = content;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     };
 }

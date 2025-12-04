@@ -21,17 +21,17 @@ public class Company {
     @Enumerated(EnumType.STRING)
     private CompanyIndustryType industry;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     public Company() {};
 
-    public Company(String name, CompanyIndustryType industry, LocalDateTime created_at, LocalDateTime updated_at) {
+    public Company(String name, CompanyIndustryType industry, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.name = name;
         this.industry = industry;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     };
 
     public Company(String name, CompanyIndustryType industry) {

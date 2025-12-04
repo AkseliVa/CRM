@@ -25,18 +25,18 @@ public class Customer {
 
     private String phone;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     public Customer() {};
 
-    public Customer(Company company, String name, String email, String phone, LocalDateTime created_at, LocalDateTime updated_at) {
+    public Customer(Company company, String name, String email, String phone, LocalDateTime createdAt, LocalDateTime updatedAt) {
       this.company = company;
       this.name = name;
       this.email = email;
       this.phone = phone;
-      this.created_at = created_at;
-      this.updated_at = updated_at;
+      this.createdAt = createdAt;
+      this.updatedAt = updatedAt;
     };
 }

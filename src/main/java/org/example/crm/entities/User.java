@@ -24,17 +24,17 @@ public class User {
 
     private String passwordHash;
 
-    private LocalDateTime created_at;
+    private LocalDateTime createdAt;
 
-    private LocalDateTime updated_at;
+    private LocalDateTime updatedAt;
 
     public User() {};
 
-    public User(String email, UserRole role, String passwordHash, LocalDateTime created_at, LocalDateTime updated_at) {
+    public User(String email, UserRole role, String passwordHash, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.email = email;
         this.role = role;
         this.passwordHash = passwordHash;
-        this.created_at = created_at;
-        this.updated_at = updated_at;
+        this.createdAt = createdAt;
+        this.updatedAt = updatedAt;
     };
 }
