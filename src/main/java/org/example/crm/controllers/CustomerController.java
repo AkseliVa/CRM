@@ -2,6 +2,7 @@ package org.example.crm.controllers;
 
 import org.example.crm.entities.Customer;
 import org.example.crm.repositories.CustomerRepository;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.LocalDateTime;
@@ -9,6 +10,7 @@ import java.util.List;
 import java.util.Optional;
 
 @RestController
+@RequestMapping("/api/customers")
 public class CustomerController {
     private final CustomerRepository customerRepository;
 
@@ -16,26 +18,32 @@ public class CustomerController {
         this.customerRepository = customerRepository;
     };
 
-    @GetMapping("/api/customer")
+    @GetMapping
     public List<Customer> getCustomers() {
         return customerRepository.findAll();
     };
 
-    @GetMapping("/api/customer/{id}")
-    public Optional<Customer> getCustomer(@PathVariable Long id) {
-        return customerRepository.findById(id);
+    @GetMapping("/{id}")
+    public ResponseEntity<Customer> getCustomer(@PathVariable Long id) {
+        return customerRepository.findById(id)
+                .map(ResponseEntity::ok)
+                .orElse(ResponseEntity.notFound().build());
     };
 
-    @PostMapping("/api/customer")
+    @PostMapping
     public Customer createCustomer(@RequestBody Customer customer) {
         customer.setCreated_at(LocalDateTime.now());
         customer.setUpdated_at(LocalDateTime.now());
         return customerRepository.save(customer);
     };
 
-    @PutMapping("/api/customer/{id}")
-    public Customer updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
         Customer updatedCustomer = customerRepository.findById(id).orElse(null);
+
+        if (updatedCustomer == null) {
+            return ResponseEntity.notFound().build();
+        }
 
         updatedCustomer.setCompany(customer.getCompany());
         updatedCustomer.setName(customer.getName());
@@ -43,6 +51,18 @@ public class CustomerController {
         updatedCustomer.setPhone(customer.getPhone());
         updatedCustomer.setUpdated_at(LocalDateTime.now());
 
-        return customerRepository.save(updatedCustomer);
+        return ResponseEntity.ok(customerRepository.save(updatedCustomer));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteCustomer(@PathVariable Long id) {
+
+        if (!customerRepository.existsById(id)) {
+            return ResponseEntity.notFound().build();
+        }
+
+        customerRepository.deleteById(id);
+
+        return ResponseEntity.noContent().build();
     }
 }
