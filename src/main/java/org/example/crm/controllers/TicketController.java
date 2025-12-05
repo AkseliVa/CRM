@@ -32,8 +32,8 @@ public class TicketController {
 
     @PostMapping
     public Ticket createTicket(@RequestBody Ticket ticket) {
-        ticket.setCreated_at(LocalDateTime.now());
-        ticket.setUpdated_at(LocalDateTime.now());
+        ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setUpdatedAt(LocalDateTime.now());
         return ticketRepository.save(ticket);
     };
 
@@ -49,7 +49,7 @@ public class TicketController {
         updatedTicket.setDescription(ticket.getDescription());
         updatedTicket.setPriority(ticket.getPriority());
         updatedTicket.setStatus(ticket.getStatus());
-        updatedTicket.setUpdated_at(LocalDateTime.now());
+        updatedTicket.setUpdatedAt(LocalDateTime.now());
         updatedTicket.setAssignedUser(ticket.getAssignedUser());
         updatedTicket.setCompany(ticket.getCompany());
         updatedTicket.setCustomer(ticket.getCustomer());
