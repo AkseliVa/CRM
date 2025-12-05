@@ -1,6 +1,11 @@
 package org.example.crm.controllers;
 
+import org.example.crm.DTOs.CustomerCreateDTO;
+import org.example.crm.DTOs.CustomerDTO;
+import org.example.crm.DTOs.CustomerUpdateDTO;
 import org.example.crm.entities.Customer;
+import org.example.crm.mappers.CustomerMapper;
+import org.example.crm.repositories.CompanyRepository;
 import org.example.crm.repositories.CustomerRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -13,45 +18,64 @@ import java.util.Optional;
 @RequestMapping("/api/customers")
 public class CustomerController {
     private final CustomerRepository customerRepository;
+    private final CompanyRepository companyRepository;
 
-    public CustomerController(CustomerRepository customerRepository) {
+    public CustomerController(CustomerRepository customerRepository, CompanyRepository companyRepository) {
         this.customerRepository = customerRepository;
+        this.companyRepository = companyRepository;
     };
 
     @GetMapping
-    public List<Customer> getCustomers() {
-        return customerRepository.findAll();
+    public List<CustomerDTO> getCustomers() {
+        return customerRepository.findAll()
+                .stream()
+                .map(CustomerMapper::toCustomerDTO)
+                .toList();
     };
 
     @GetMapping("/{id}")
-    public ResponseEntity<Customer> getCustomer(@PathVariable Long id) {
+    public ResponseEntity<CustomerDTO> getCustomer(@PathVariable Long id) {
         return customerRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(c -> ResponseEntity.ok(CustomerMapper.toCustomerDTO(c)))
                 .orElse(ResponseEntity.notFound().build());
     };
 
     @PostMapping
-    public Customer createCustomer(@RequestBody Customer customer) {
-        customer.setCreated_at(LocalDateTime.now());
-        customer.setUpdated_at(LocalDateTime.now());
-        return customerRepository.save(customer);
-    };
+    public ResponseEntity<CustomerDTO> createCustomer(@RequestBody CustomerCreateDTO dto) {
+        var company = companyRepository.findById(dto.companyId())
+                        .orElse(null);
 
-    @PutMapping("/{id}")
-    public ResponseEntity<Customer> updateCustomer(@PathVariable Long id, @RequestBody Customer customer) {
-        Customer updatedCustomer = customerRepository.findById(id).orElse(null);
-
-        if (updatedCustomer == null) {
+        if (company == null) {
             return ResponseEntity.notFound().build();
         }
 
-        updatedCustomer.setCompany(customer.getCompany());
-        updatedCustomer.setName(customer.getName());
-        updatedCustomer.setEmail(customer.getEmail());
-        updatedCustomer.setPhone(customer.getPhone());
-        updatedCustomer.setUpdated_at(LocalDateTime.now());
+        Customer customer = CustomerMapper.fromCreateDTO(dto, company);
 
-        return ResponseEntity.ok(customerRepository.save(updatedCustomer));
+        Customer saved = customerRepository.save(customer);
+
+        return ResponseEntity.ok(CustomerMapper.toCustomerDTO(saved));
+    };
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CustomerDTO> updateCustomer(
+            @PathVariable Long id,
+            @RequestBody CustomerUpdateDTO dto) {
+
+        Customer existing = customerRepository.findById(id).orElse(null);
+        if (existing == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        var company = companyRepository.findById(dto.companyId()).orElse(null);
+        if (company == null) {
+            return ResponseEntity.notFound().build();
+        }
+
+        CustomerMapper.updateEntity(existing, dto, company);
+
+        Customer saved = customerRepository.save(existing);
+
+        return ResponseEntity.ok(CustomerMapper.toCustomerDTO(saved));
     }
 
     @DeleteMapping("/{id}")
