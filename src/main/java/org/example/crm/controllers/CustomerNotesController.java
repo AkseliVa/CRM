@@ -17,7 +17,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.List;
 
 @RestController
-@RequestMapping("/api/customer_notes")
+@RequestMapping("/api/customer-notes")
 public class CustomerNotesController {
     private final CustomerNotesRepository customerNotesRepository;
     private final UserRepository userRepository;
