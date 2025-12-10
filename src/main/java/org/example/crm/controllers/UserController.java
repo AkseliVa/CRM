@@ -1,6 +1,10 @@
 package org.example.crm.controllers;
 
+import org.example.crm.DTOs.UserCreateDTO;
+import org.example.crm.DTOs.UserDTO;
+import org.example.crm.DTOs.UserUpdateDTO;
 import org.example.crm.entities.User;
+import org.example.crm.mappers.UserMapper;
 import org.example.crm.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -19,37 +23,41 @@ public class UserController {
     };
 
     @GetMapping
-    public List<User> getUsers() {
-        return userRepository.findAll();
+    public List<UserDTO> getUsers() {
+        return userRepository.findAll()
+                .stream()
+                .map(UserMapper::toUserDTO)
+                .toList();
     };
 
     @GetMapping("/{id}")
-    public ResponseEntity<User> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
         return userRepository.findById(id)
-                .map(ResponseEntity::ok)
+                .map(u -> ResponseEntity.ok(UserMapper.toUserDTO(u)))
                 .orElse(ResponseEntity.notFound().build());
     };
 
     @PostMapping
-    public User createUser(@RequestBody User user) {
-        user.setCreated_at(LocalDateTime.now());
-        user.setUpdated_at(LocalDateTime.now());
-        return userRepository.save(user);
+    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO dto) {
+        User user = UserMapper.fromCreateDTO(dto);
+
+        User saved = userRepository.save(user);
+
+        return ResponseEntity.ok(UserMapper.toUserDTO(saved));
     };
 
     @PutMapping("/{id}")
-    public ResponseEntity<User> updateUser(@PathVariable Long id, @RequestBody User user) {
-        User updatedUser = userRepository.findById(id).orElse(null);
-
-        if (updatedUser == null) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserUpdateDTO dto) {
+        User existing = userRepository.findById(id).orElse(null);
+        if (existing == null) {
             return ResponseEntity.notFound().build();
         }
 
-        updatedUser.setEmail(user.getEmail());
-        updatedUser.setPasswordHash(user.getPasswordHash());
-        updatedUser.setUpdated_at(LocalDateTime.now());
+        UserMapper.updateEntity(existing, dto);
 
-        return ResponseEntity.ok(userRepository.save(updatedUser));
+        User saved = userRepository.save(existing);
+
+        return ResponseEntity.ok(UserMapper.toUserDTO(saved));
     }
 
     @DeleteMapping("/{id}")
