@@ -1,9 +1,12 @@
 package org.example.crm.mappers;
 
 import org.example.crm.DTOs.CustomerCreateDTO;
+import org.example.crm.DTOs.CustomerUpdateDTO;
 import org.example.crm.entities.Company;
 import org.example.crm.entities.Customer;
 import org.junit.jupiter.api.Test;
+
+import java.time.LocalDateTime;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
@@ -25,6 +28,34 @@ public class CustomerMapperTest {
         assertEquals("050223344", customer.getPhone());
         assertEquals(company, customer.getCompany());
 
+        assertNotNull(customer.getCreatedAt());
+        assertNotNull(customer.getUpdatedAt());
+    }
+
+    @Test
+    public void testUpdateDTO() {
+        Customer customer = new Customer();
+
+        Company oldCompany = new Company();
+        oldCompany.setId(99L);
+
+        customer.setCompany(oldCompany);
+        customer.setName("old name");
+        customer.setEmail("old email");
+        customer.setPhone("old phone");
+        customer.setCreatedAt(LocalDateTime.now());
+
+        Company newCompany = new Company();
+        newCompany.setId(66L);
+
+        CustomerUpdateDTO dto = new CustomerUpdateDTO("new name", "new email", "new phone", 99L);
+
+        CustomerMapper.updateEntity(customer, dto, newCompany);
+
+        assertEquals("new name", customer.getName());
+        assertEquals("new email", customer.getEmail());
+        assertEquals("new phone", customer.getPhone());
+        assertEquals(newCompany, customer.getCompany());
         assertNotNull(customer.getCreatedAt());
         assertNotNull(customer.getUpdatedAt());
     }
