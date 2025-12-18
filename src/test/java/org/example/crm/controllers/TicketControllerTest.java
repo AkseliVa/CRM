@@ -92,4 +92,91 @@ public class TicketControllerTest {
                 .andExpect(jsonPath("$.assignedUserId").value(3L));
 
     }
+
+    @Test
+    void createTicket_failure_noCompany() throws Exception {
+
+        Customer customer = new Customer();
+        customer.setId(2L);
+
+        User user = new User();
+        user.setId(3L);
+
+        when(companyRepository.findById(1L)).thenReturn(Optional.empty());
+        when(customerRepository.findById(2L)).thenReturn(Optional.of(customer));
+        when(userRepository.findById(3L)).thenReturn(Optional.of(user));
+
+        TicketCreateDTO dto = new TicketCreateDTO(
+                "Test ticket",
+                "Test description",
+                TicketPriority.LOW,
+                TicketStatus.OPEN,
+                1L,
+                2L,
+                3L
+        );
+
+        mockMvc.perform(post("/api/tickets")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createTicket_failure_noCustomer() throws Exception {
+
+        Company company = new Company();
+        company.setId(1L);
+
+        User user = new User();
+        user.setId(3L);
+
+        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+        when(customerRepository.findById(2L)).thenReturn(Optional.empty());
+        when(userRepository.findById(3L)).thenReturn(Optional.of(user));
+
+        TicketCreateDTO dto = new TicketCreateDTO(
+                "Test ticket",
+                "Test description",
+                TicketPriority.HIGH,
+                TicketStatus.IN_PROGRESS,
+                1L,
+                2L,
+                3L
+        );
+
+        mockMvc.perform(post("/api/tickets")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isNotFound());
+
+    }
+
+    @Test
+    void createTicket_failure_noUser() throws Exception {
+        Company company = new Company();
+        company.setId(1L);
+
+        Customer customer = new Customer();
+        customer.setId(2L);
+
+        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+        when(customerRepository.findById(2L)).thenReturn(Optional.of(customer));
+        when(userRepository.findById(3L)).thenReturn(Optional.empty());
+
+        TicketCreateDTO dto = new TicketCreateDTO(
+                "Test ticket",
+                "Test description",
+                TicketPriority.LOW,
+                TicketStatus.CLOSED,
+                1L,
+                2L,
+                3L
+        );
+
+        mockMvc.perform(post("/api/tickets")
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isNotFound());
+    }
 }
