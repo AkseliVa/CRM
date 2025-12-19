@@ -1,6 +1,7 @@
 package org.example.crm.controllers;
 
 import org.example.crm.DTOs.TicketCreateDTO;
+import org.example.crm.DTOs.TicketUpdateDTO;
 import org.example.crm.entities.Company;
 import org.example.crm.entities.Customer;
 import org.example.crm.entities.Ticket;
@@ -23,8 +24,10 @@ import java.time.LocalDateTime;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
@@ -178,5 +181,66 @@ public class TicketControllerTest {
                 .contentType(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateTicket_success() throws Exception {
+
+        Company company = new Company();
+        company.setId(1L);
+        Company newCompany = new Company();
+        newCompany.setId(11L);
+
+        Customer customer = new Customer();
+        customer.setId(2L);
+        Customer newCustomer = new Customer();
+        newCustomer.setId(22L);
+
+        User user = new User();
+        user.setId(3L);
+        User newUser = new User();
+        newUser.setId(33L);
+
+        Ticket ticket = new Ticket();
+
+        ticket.setId(10L);
+        ticket.setTitle("Test ticket");
+        ticket.setDescription("Test description");
+        ticket.setCompany(company);
+        ticket.setCustomer(customer);
+        ticket.setAssignedUser(user);
+        ticket.setPriority(TicketPriority.HIGH);
+        ticket.setStatus(TicketStatus.OPEN);
+        ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setUpdatedAt(LocalDateTime.now());
+
+        when(ticketRepository.findById(10L)).thenReturn(Optional.of(ticket));
+        when(companyRepository.findById(11L)).thenReturn(Optional.of(newCompany));
+        when(customerRepository.findById(22L)).thenReturn(Optional.of(newCustomer));
+        when(userRepository.findById(33L)).thenReturn(Optional.of(newUser));
+        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
+
+        TicketUpdateDTO dto = new TicketUpdateDTO(
+                "Test ticket updated",
+                "Test description updated",
+                TicketPriority.LOW,
+                TicketStatus.CLOSED,
+                11L,
+                22L,
+                33L
+        );
+
+        mockMvc.perform(put("/api/tickets/{id}", 10L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(10L))
+                .andExpect(jsonPath("$.title").value("Test ticket updated"))
+                .andExpect(jsonPath("$.description").value("Test description updated"))
+                .andExpect(jsonPath("$.status").value("CLOSED"))
+                .andExpect(jsonPath("$.priority").value("LOW"))
+                .andExpect(jsonPath("$.companyId").value(11L))
+                .andExpect(jsonPath("$.customerId").value(22L))
+                .andExpect(jsonPath("$.assignedUserId").value(33L));
     }
 }
