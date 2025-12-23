@@ -35,6 +35,11 @@ public class CompanyControllerTest {
     private CompanyRepository companyRepository;
 
     @Test
+    void getCompanies_success() throws Exception {
+
+    }
+
+    @Test
     void createCompany_success() throws Exception {
 
         Company company = new Company();
