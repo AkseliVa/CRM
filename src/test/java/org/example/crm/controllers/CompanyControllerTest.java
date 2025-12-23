@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +38,50 @@ public class CompanyControllerTest {
     @Test
     void getCompanies_success() throws Exception {
 
+        Company company = new Company();
+
+        company.setId(1L);
+        company.setName("Company");
+        company.setIndustry(CompanyIndustryType.FINANCE);
+        company.setCreatedAt(LocalDateTime.now());
+        company.setUpdatedAt(LocalDateTime.now());
+
+        when(companyRepository.findAll()).thenReturn(List.of(company));
+
+        mockMvc.perform(get("/api/companies"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].name").value("Company"))
+                .andExpect(jsonPath("$[0].industry").value("FINANCE"));
+    }
+
+    @Test
+    void getCompany_success() throws Exception {
+
+        Company company = new Company();
+
+        company.setId(1L);
+        company.setName("Company");
+        company.setIndustry(CompanyIndustryType.IT);
+        company.setCreatedAt(LocalDateTime.now());
+        company.setUpdatedAt(LocalDateTime.now());
+
+        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+
+        mockMvc.perform(get("/api/companies/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Company"))
+                .andExpect(jsonPath("$.industry").value("IT"));
+    }
+
+    @Test
+    void getCompany_failure() throws Exception {
+
+        when(companyRepository.findById(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/companies/{id}", 1L))
+                .andExpect(status().isNotFound());
     }
 
     @Test
