@@ -671,4 +671,4 @@ public class TicketControllerTest {
 
 The current test coverage is shown in the picture below.
 
-![Test coverage](/resources/static/testcoverage.png)
+![Test coverage](/src/main/resources/static/testcoverage.png)
