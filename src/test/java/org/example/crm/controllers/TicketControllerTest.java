@@ -172,7 +172,6 @@ public class TicketControllerTest {
                 .andExpect(jsonPath("$.companyId").value(1L))
                 .andExpect(jsonPath("$.customerId").value(2L))
                 .andExpect(jsonPath("$.assignedUserId").value(3L));
-
     }
 
     @Test
