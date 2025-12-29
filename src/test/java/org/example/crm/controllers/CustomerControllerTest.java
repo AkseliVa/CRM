@@ -15,6 +15,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -37,6 +38,69 @@ public class CustomerControllerTest {
 
     @MockitoBean
     private CompanyRepository companyRepository;
+
+    @Test
+    void getCustomers() throws Exception {
+
+        Company company = new Company();
+
+        company.setId(10L);
+
+        Customer customer = new Customer();
+
+        customer.setId(1L);
+        customer.setName("Testname");
+        customer.setEmail("test@email.com");
+        customer.setPhone("0401234");
+        customer.setCompany(company);
+        customer.setCreatedAt(LocalDateTime.now());
+        customer.setUpdatedAt(LocalDateTime.now());
+
+        when(customerRepository.findAll()).thenReturn(List.of(customer));
+
+        mockMvc.perform(get("/api/customers"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].name").value("Testname"))
+                .andExpect(jsonPath("[0].email").value("test@email.com"))
+                .andExpect(jsonPath("$[0].phone").value("0401234"));
+    }
+
+    @Test
+    void getCustomer_success() throws Exception {
+
+        Company company = new Company();
+
+        company.setId(10L);
+
+        Customer customer = new Customer();
+
+        customer.setId(1L);
+        customer.setName("Testname");
+        customer.setEmail("test@email.com");
+        customer.setPhone("0501324");
+        customer.setCompany(company);
+        customer.setCreatedAt(LocalDateTime.now());
+        customer.setUpdatedAt(LocalDateTime.now());
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.of(customer));
+
+        mockMvc.perform(get("/api/customers/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Testname"))
+                .andExpect(jsonPath("$.email").value("test@email.com"))
+                .andExpect(jsonPath("$.phone").value("0501324"));
+    }
+
+    @Test
+    void getCustomer_failure() throws Exception {
+
+        when(customerRepository.findById(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/customers/{id}", 1L))
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     void createCustomer_success() throws Exception {
