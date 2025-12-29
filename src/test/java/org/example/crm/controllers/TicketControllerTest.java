@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
+import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
@@ -49,6 +50,86 @@ public class TicketControllerTest {
 
     @MockitoBean
     private UserRepository userRepository;
+
+    @Test
+    void getTickets() throws Exception {
+
+        Company company = new Company();
+        company.setId(10L);
+
+        Customer customer = new Customer();
+        customer.setId(11L);
+
+        User user = new User();
+        user.setId(12L);
+
+        Ticket ticket = new Ticket();
+
+        ticket.setId(1L);
+        ticket.setTitle("Test Title");
+        ticket.setDescription("Test Description");
+        ticket.setStatus(TicketStatus.OPEN);
+        ticket.setPriority(TicketPriority.LOW);
+        ticket.setCompany(company);
+        ticket.setCustomer(customer);
+        ticket.setAssignedUser(user);
+        ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setUpdatedAt(LocalDateTime.now());
+
+        when(ticketRepository.findAll()).thenReturn(List.of(ticket));
+
+        mockMvc.perform(get("/api/tickets"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].title").value("Test Title"))
+                .andExpect(jsonPath("$[0].description").value("Test Description"));
+    }
+
+    @Test
+    void getTicket_success() throws Exception {
+
+        Company company = new Company();
+        company.setId(10L);
+
+        Customer customer = new Customer();
+        customer.setId(11L);
+
+        User user = new User();
+        user.setId(12L);
+
+        Ticket ticket = new Ticket();
+
+        ticket.setId(1L);
+        ticket.setTitle("Test Title");
+        ticket.setDescription("Test Description");
+        ticket.setStatus(TicketStatus.OPEN);
+        ticket.setPriority(TicketPriority.LOW);
+        ticket.setCompany(company);
+        ticket.setCustomer(customer);
+        ticket.setAssignedUser(user);
+        ticket.setCreatedAt(LocalDateTime.now());
+        ticket.setUpdatedAt(LocalDateTime.now());
+
+        when(ticketRepository.findById(1L)).thenReturn(Optional.of(ticket));
+
+        mockMvc.perform(get("/api/tickets/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.title").value("Test Title"))
+                .andExpect(jsonPath("$.description").value("Test Description"))
+                .andExpect(jsonPath("$.companyId").value(10L))
+                .andExpect(jsonPath("$.customerId").value(11L))
+                .andExpect(jsonPath("$.assignedUserId").value(12L));
+    }
+
+    @Test
+    void getTicket_failure() throws Exception {
+
+        when(ticketRepository.findById(1L)).thenReturn(Optional.empty());
+
+        mockMvc.perform(get("/api/tickets/{id}", 1L))
+                .andExpect(status().isNotFound());
+    }
 
     @Test
     void createTicket_success() throws Exception {
