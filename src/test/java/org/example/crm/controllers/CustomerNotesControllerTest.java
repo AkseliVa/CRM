@@ -211,4 +211,113 @@ public class CustomerNotesControllerTest {
                 .andExpect(jsonPath("$.customerId").value(11L))
                 .andExpect(jsonPath("$.userId").value(22L));
     }
+
+    @Test
+    void updateCustomerNotes_failure_noCustomerNotes() throws Exception {
+
+        when(customerNotesRepository.findById(10L)).thenReturn(Optional.empty());
+
+        CustomerNotesUpdateDTO dto = new CustomerNotesUpdateDTO(
+                1L,
+                2L,
+                "Test content"
+        );
+
+        mockMvc.perform(put("/api/customer-notes/{id}", 10L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateCustomerNotes_failure_noCustomer() throws Exception {
+
+        Customer oldCustomer = new Customer();
+        oldCustomer.setId(1L);
+
+        User oldUser = new User();
+        oldUser.setId(2L);
+        User newUser = new User();
+        newUser.setId(22L);
+
+        CustomerNotes customerNotes = new CustomerNotes();
+        customerNotes.setId(10L);
+        customerNotes.setContent("Test content");
+        customerNotes.setCustomer(oldCustomer);
+        customerNotes.setUser(oldUser);
+        customerNotes.setCreatedAt(LocalDateTime.now());
+        customerNotes.setUpdatedAt(LocalDateTime.now());
+
+        when(customerRepository.findById(11L)).thenReturn(Optional.empty());
+        when(userRepository.findById(22L)).thenReturn(Optional.of(newUser));
+        when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(customerNotes);
+
+        CustomerNotesUpdateDTO dto = new CustomerNotesUpdateDTO(
+                11L,
+                22L,
+                "Updated content"
+        );
+
+        mockMvc.perform(put("/api/customer-notes/{id}", 10L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void updateCustomerNotes_failure_noUser() throws Exception {
+
+        Customer oldCustomer = new Customer();
+        oldCustomer.setId(1L);
+        Customer newCustomer = new Customer();
+        newCustomer.setId(11L);
+
+        User oldUser = new User();
+        oldUser.setId(2L);
+
+        CustomerNotes customerNotes = new CustomerNotes();
+        customerNotes.setId(10L);
+        customerNotes.setContent("Test content");
+        customerNotes.setCustomer(oldCustomer);
+        customerNotes.setUser(oldUser);
+        customerNotes.setCreatedAt(LocalDateTime.now());
+        customerNotes.setUpdatedAt(LocalDateTime.now());
+
+        when(customerRepository.findById(11L)).thenReturn(Optional.of(newCustomer));
+        when(userRepository.findById(22L)).thenReturn(Optional.empty());
+        when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(customerNotes);
+
+        CustomerNotesUpdateDTO dto = new CustomerNotesUpdateDTO(
+                11L,
+                22L,
+                "Updated content"
+        );
+
+        mockMvc.perform(put("/api/customer-notes/{id}", 10L)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(dto)))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void deleteCustomerNotes_success() throws Exception {
+
+        when(customerNotesRepository.existsById(10L)).thenReturn(true);
+
+        mockMvc.perform(delete("/api/customer-notes/{id}", 10L))
+                .andExpect(status().isNoContent());
+
+        verify(customerNotesRepository).deleteById(10L);
+    }
+
+    @Test
+    void deleteCustomerNotes_failure() throws Exception {
+
+        when(customerNotesRepository.existsById(10L)).thenReturn(false);
+
+        mockMvc.perform(delete("/api/customer-notes/{id}", 10L))
+                .andExpect(status().isNotFound());
+
+        verify(customerNotesRepository, never()).deleteById(any());
+    }
 }
