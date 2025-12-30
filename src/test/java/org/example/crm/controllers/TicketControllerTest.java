@@ -76,7 +76,7 @@ public class TicketControllerTest {
         ticket.setCreatedAt(LocalDateTime.now());
         ticket.setUpdatedAt(LocalDateTime.now());
 
-        when(ticketRepository.findAll()).thenReturn(List.of(ticket));
+        when(ticketRepository.findAllWithRelations()).thenReturn(List.of(ticket));
 
         mockMvc.perform(get("/api/tickets"))
                 .andExpect(status().isOk())

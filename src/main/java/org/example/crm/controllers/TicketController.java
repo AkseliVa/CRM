@@ -31,7 +31,7 @@ public class TicketController {
 
     @GetMapping
     public List<TicketDTO> getTickets() {
-        return ticketRepository.findAll()
+        return ticketRepository.findAllWithRelations()
                 .stream()
                 .map(TicketMapper::toTicketDTO)
                 .toList();

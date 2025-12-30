@@ -61,7 +61,7 @@ public class CustomerNoteControllerTest {
         customerNote.setCreatedAt(LocalDateTime.now());
         customerNote.setUpdatedAt(LocalDateTime.now());
 
-        when(customerNoteRepository.findAll()).thenReturn(List.of(customerNote));
+        when(customerNoteRepository.findAllWithRelations()).thenReturn(List.of(customerNote));
 
         mockMvc.perform(get("/api/customer-notes"))
                 .andExpect(status().isOk())

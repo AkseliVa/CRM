@@ -28,7 +28,7 @@ public class CustomerNoteController {
 
     @GetMapping
     public List<CustomerNoteDTO> getCustomerNotes() {
-        return customerNoteRepository.findAll()
+        return customerNoteRepository.findAllWithRelations()
                 .stream()
                 .map(CustomerNoteMapper::toCustomerNoteDTO)
                 .toList();
