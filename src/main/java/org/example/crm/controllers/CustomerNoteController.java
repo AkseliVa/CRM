@@ -3,9 +3,9 @@ package org.example.crm.controllers;
 import org.example.crm.DTOs.CustomerNoteCreateDTO;
 import org.example.crm.DTOs.CustomerNoteDTO;
 import org.example.crm.DTOs.CustomerNoteUpdateDTO;
-import org.example.crm.entities.CustomerNotes;
+import org.example.crm.entities.CustomerNote;
 import org.example.crm.mappers.CustomerNoteMapper;
-import org.example.crm.repositories.CustomerNotesRepository;
+import org.example.crm.repositories.CustomerNoteRepository;
 import org.example.crm.repositories.CustomerRepository;
 import org.example.crm.repositories.UserRepository;
 import org.springframework.http.ResponseEntity;
@@ -16,19 +16,19 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/customer-notes")
 public class CustomerNoteController {
-    private final CustomerNotesRepository customerNotesRepository;
+    private final CustomerNoteRepository customerNoteRepository;
     private final UserRepository userRepository;
     private final CustomerRepository customerRepository;
 
-    public CustomerNoteController(CustomerNotesRepository customerNotesRepository, UserRepository userRepository, CustomerRepository customerRepository) {
-        this.customerNotesRepository = customerNotesRepository;
+    public CustomerNoteController(CustomerNoteRepository customerNoteRepository, UserRepository userRepository, CustomerRepository customerRepository) {
+        this.customerNoteRepository = customerNoteRepository;
         this.userRepository = userRepository;
         this.customerRepository = customerRepository;
     };
 
     @GetMapping
     public List<CustomerNoteDTO> getCustomerNotes() {
-        return customerNotesRepository.findAll()
+        return customerNoteRepository.findAll()
                 .stream()
                 .map(CustomerNoteMapper::toCustomerNoteDTO)
                 .toList();
@@ -36,7 +36,7 @@ public class CustomerNoteController {
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerNoteDTO> getCustomerNotes(@PathVariable Long id) {
-        return customerNotesRepository.findById(id)
+        return customerNoteRepository.findById(id)
                 .map(c -> ResponseEntity.ok(CustomerNoteMapper.toCustomerNoteDTO(c)))
                 .orElse(ResponseEntity.notFound().build());
     };
@@ -55,16 +55,16 @@ public class CustomerNoteController {
             return ResponseEntity.notFound().build();
         }
 
-        CustomerNotes notes = CustomerNoteMapper.fromCreateDTO(dto, customer, user);
+        CustomerNote note = CustomerNoteMapper.fromCreateDTO(dto, customer, user);
 
-        CustomerNotes saved = customerNotesRepository.save(notes);
+        CustomerNote saved = customerNoteRepository.save(note);
 
         return ResponseEntity.ok(CustomerNoteMapper.toCustomerNoteDTO(saved));
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerNoteDTO> updateCustomerNotes(@PathVariable Long id, @RequestBody CustomerNoteUpdateDTO dto) {
-        CustomerNotes existing= customerNotesRepository.findById(id).orElse(null);
+        CustomerNote existing= customerNoteRepository.findById(id).orElse(null);
         if (existing == null) {
             return ResponseEntity.notFound().build();
         }
@@ -81,7 +81,7 @@ public class CustomerNoteController {
 
         CustomerNoteMapper.updateEntity(existing, dto, customer, user);
 
-        CustomerNotes saved = customerNotesRepository.save(existing);
+        CustomerNote saved = customerNoteRepository.save(existing);
 
         return ResponseEntity.ok(CustomerNoteMapper.toCustomerNoteDTO(saved));
     }
@@ -89,11 +89,11 @@ public class CustomerNoteController {
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCustomerNotes(@PathVariable Long id) {
 
-        if (!customerNotesRepository.existsById(id)) {
+        if (!customerNoteRepository.existsById(id)) {
             return ResponseEntity.notFound().build();
         }
 
-        customerNotesRepository.deleteById(id);
+        customerNoteRepository.deleteById(id);
 
         return ResponseEntity.noContent().build();
     }

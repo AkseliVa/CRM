@@ -97,7 +97,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;import org.example.crm.mappers.CustomerMapper;
 &nbsp;import org.example.crm.mappers.CustomerNoteMapper;
 &nbsp;import org.example.crm.repositories.CompanyRepository;
-&nbsp;import org.example.crm.repositories.CustomerNotesRepository;
+&nbsp;import org.example.crm.repositories.CustomerNoteRepository;
 &nbsp;import org.example.crm.repositories.CustomerRepository;
 &nbsp;import org.example.crm.repositories.UserRepository;
 &nbsp;import org.springframework.http.ResponseEntity;
@@ -108,19 +108,19 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;@RestController
 &nbsp;@RequestMapping(&quot;/api/customer-notes&quot;)
 &nbsp;public class CustomerNotesController {
-&nbsp;    private final CustomerNotesRepository customerNotesRepository;
+&nbsp;    private final CustomerNotesRepository customerNoteRepository;
 &nbsp;    private final UserRepository userRepository;
 &nbsp;    private final CustomerRepository customerRepository;
 &nbsp;
-<b class="fc">&nbsp;    public CustomerNotesController(CustomerNotesRepository customerNotesRepository, UserRepository userRepository, CustomerRepository customerRepository) {</b>
-<b class="fc">&nbsp;        this.customerNotesRepository = customerNotesRepository;</b>
+<b class="fc">&nbsp;    public CustomerNotesController(CustomerNotesRepository customerNoteRepository, UserRepository userRepository, CustomerRepository customerRepository) {</b>
+<b class="fc">&nbsp;        this.customerNoteRepository = customerNoteRepository;</b>
 <b class="fc">&nbsp;        this.userRepository = userRepository;</b>
 <b class="fc">&nbsp;        this.customerRepository = customerRepository;</b>
 &nbsp;    };
 &nbsp;
 &nbsp;    @GetMapping
 &nbsp;    public List&lt;CustomerNotesDTO&gt; getCustomerNotes() {
-<b class="fc">&nbsp;        return customerNotesRepository.findAll()</b>
+<b class="fc">&nbsp;        return customerNoteRepository.findAll()</b>
 <b class="fc">&nbsp;                .stream()</b>
 <b class="fc">&nbsp;                .map(CustomerNotesMapper::toCustomerNotesDTO)</b>
 <b class="fc">&nbsp;                .toList();</b>
@@ -128,7 +128,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 &nbsp;    @GetMapping(&quot;/{id}&quot;)
 &nbsp;    public ResponseEntity&lt;CustomerNotesDTO&gt; getCustomerNotes(@PathVariable Long id) {
-<b class="fc">&nbsp;        return customerNotesRepository.findById(id)</b>
+<b class="fc">&nbsp;        return customerNoteRepository.findById(id)</b>
 <b class="fc">&nbsp;                .map(c -&gt; ResponseEntity.ok(CustomerNotesMapper.toCustomerNotesDTO(c)))</b>
 <b class="fc">&nbsp;                .orElse(ResponseEntity.notFound().build());</b>
 &nbsp;    };
@@ -149,14 +149,14 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 <b class="fc">&nbsp;        CustomerNotes notes = CustomerNotesMapper.fromCreateDTO(dto, customer, user);</b>
 &nbsp;
-<b class="fc">&nbsp;        CustomerNotes saved = customerNotesRepository.save(notes);</b>
+<b class="fc">&nbsp;        CustomerNotes saved = customerNoteRepository.save(notes);</b>
 &nbsp;
 <b class="fc">&nbsp;        return ResponseEntity.ok(CustomerNotesMapper.toCustomerNotesDTO(saved));</b>
 &nbsp;    }
 &nbsp;
 &nbsp;    @PutMapping(&quot;/{id}&quot;)
 &nbsp;    public ResponseEntity&lt;CustomerNotesDTO&gt; updateCustomerNotes(@PathVariable Long id, @RequestBody CustomerNotesUpdateDTO dto) {
-<b class="fc">&nbsp;        CustomerNotes existing= customerNotesRepository.findById(id).orElse(null);</b>
+<b class="fc">&nbsp;        CustomerNotes existing= customerNoteRepository.findById(id).orElse(null);</b>
 <b class="fc">&nbsp;        if (existing == null) {</b>
 <b class="fc">&nbsp;            return ResponseEntity.notFound().build();</b>
 &nbsp;        }
@@ -173,7 +173,7 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;
 <b class="fc">&nbsp;        CustomerNotesMapper.updateEntity(existing, dto, customer, user);</b>
 &nbsp;
-<b class="fc">&nbsp;        CustomerNotes saved = customerNotesRepository.save(existing);</b>
+<b class="fc">&nbsp;        CustomerNotes saved = customerNoteRepository.save(existing);</b>
 &nbsp;
 <b class="fc">&nbsp;        return ResponseEntity.ok(CustomerNotesMapper.toCustomerNotesDTO(saved));</b>
 &nbsp;    }
@@ -181,11 +181,11 @@ Current scope:     <a href="../../index.html">all classes</a>
 &nbsp;    @DeleteMapping(&quot;/{id}&quot;)
 &nbsp;    public ResponseEntity&lt;?&gt; deleteCustomerNotes(@PathVariable Long id) {
 &nbsp;
-<b class="fc">&nbsp;        if (!customerNotesRepository.existsById(id)) {</b>
+<b class="fc">&nbsp;        if (!customerNoteRepository.existsById(id)) {</b>
 <b class="fc">&nbsp;            return ResponseEntity.notFound().build();</b>
 &nbsp;        }
 &nbsp;
-<b class="fc">&nbsp;        customerNotesRepository.deleteById(id);</b>
+<b class="fc">&nbsp;        customerNoteRepository.deleteById(id);</b>
 &nbsp;
 <b class="fc">&nbsp;        return ResponseEntity.noContent().build();</b>
 &nbsp;    }

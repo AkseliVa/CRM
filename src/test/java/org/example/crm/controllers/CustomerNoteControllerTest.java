@@ -3,9 +3,9 @@ package org.example.crm.controllers;
 import org.example.crm.DTOs.CustomerNoteCreateDTO;
 import org.example.crm.DTOs.CustomerNoteUpdateDTO;
 import org.example.crm.entities.Customer;
-import org.example.crm.entities.CustomerNotes;
+import org.example.crm.entities.CustomerNote;
 import org.example.crm.entities.User;
-import org.example.crm.repositories.CustomerNotesRepository;
+import org.example.crm.repositories.CustomerNoteRepository;
 import org.example.crm.repositories.CustomerRepository;
 import org.example.crm.repositories.UserRepository;
 import org.junit.jupiter.api.Test;
@@ -36,7 +36,7 @@ public class CustomerNoteControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private CustomerNotesRepository customerNotesRepository;
+    private CustomerNoteRepository customerNoteRepository;
 
     @MockitoBean
     private CustomerRepository customerRepository;
@@ -53,15 +53,15 @@ public class CustomerNoteControllerTest {
         User user = new User();
         user.setId(11L);
 
-        CustomerNotes customerNotes = new CustomerNotes();
-        customerNotes.setId(1L);
-        customerNotes.setContent("Test content");
-        customerNotes.setCustomer(customer);
-        customerNotes.setUser(user);
-        customerNotes.setCreatedAt(LocalDateTime.now());
-        customerNotes.setUpdatedAt(LocalDateTime.now());
+        CustomerNote customerNote = new CustomerNote();
+        customerNote.setId(1L);
+        customerNote.setContent("Test content");
+        customerNote.setCustomer(customer);
+        customerNote.setUser(user);
+        customerNote.setCreatedAt(LocalDateTime.now());
+        customerNote.setUpdatedAt(LocalDateTime.now());
 
-        when(customerNotesRepository.findAll()).thenReturn(List.of(customerNotes));
+        when(customerNoteRepository.findAll()).thenReturn(List.of(customerNote));
 
         mockMvc.perform(get("/api/customer-notes"))
                 .andExpect(status().isOk())
@@ -80,15 +80,15 @@ public class CustomerNoteControllerTest {
         User user = new User();
         user.setId(11L);
 
-        CustomerNotes customerNotes = new CustomerNotes();
-        customerNotes.setId(1L);
-        customerNotes.setContent("Test content");
-        customerNotes.setCustomer(customer);
-        customerNotes.setUser(user);
-        customerNotes.setCreatedAt(LocalDateTime.now());
-        customerNotes.setUpdatedAt(LocalDateTime.now());
+        CustomerNote customerNote = new CustomerNote();
+        customerNote.setId(1L);
+        customerNote.setContent("Test content");
+        customerNote.setCustomer(customer);
+        customerNote.setUser(user);
+        customerNote.setCreatedAt(LocalDateTime.now());
+        customerNote.setUpdatedAt(LocalDateTime.now());
 
-        when(customerNotesRepository.findById(1L)).thenReturn(Optional.of(customerNotes));
+        when(customerNoteRepository.findById(1L)).thenReturn(Optional.of(customerNote));
 
         mockMvc.perform(get("/api/customer-notes/{id}", 1L))
                 .andExpect(status().isOk())
@@ -101,7 +101,7 @@ public class CustomerNoteControllerTest {
     @Test
     void getCustomerNote_failure() throws Exception {
 
-        when(customerNotesRepository.findById(1L)).thenReturn(Optional.empty());
+        when(customerNoteRepository.findById(1L)).thenReturn(Optional.empty());
 
         mockMvc.perform(get("/api/customer-notes/{id}", 1L))
                 .andExpect(status().isNotFound());
@@ -116,17 +116,17 @@ public class CustomerNoteControllerTest {
         User user = new User();
         user.setId(11L);
 
-        CustomerNotes savedCustomerNotes = new CustomerNotes();
-        savedCustomerNotes.setId(1L);
-        savedCustomerNotes.setContent("Test content");
-        savedCustomerNotes.setCustomer(customer);
-        savedCustomerNotes.setUser(user);
-        savedCustomerNotes.setCreatedAt(LocalDateTime.now());
-        savedCustomerNotes.setUpdatedAt(LocalDateTime.now());
+        CustomerNote savedCustomerNote = new CustomerNote();
+        savedCustomerNote.setId(1L);
+        savedCustomerNote.setContent("Test content");
+        savedCustomerNote.setCustomer(customer);
+        savedCustomerNote.setUser(user);
+        savedCustomerNote.setCreatedAt(LocalDateTime.now());
+        savedCustomerNote.setUpdatedAt(LocalDateTime.now());
 
         when(customerRepository.findById(10L)).thenReturn(Optional.of(customer));
         when(userRepository.findById(11L)).thenReturn(Optional.of(user));
-        when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(savedCustomerNotes);
+        when(customerNoteRepository.save(any(CustomerNote.class))).thenReturn(savedCustomerNote);
 
         CustomerNoteCreateDTO dto = new CustomerNoteCreateDTO(10L, 11L, "Test content");
 
@@ -187,18 +187,18 @@ public class CustomerNoteControllerTest {
         User newUser = new User();
         newUser.setId(22L);
 
-        CustomerNotes customerNotes = new CustomerNotes();
-        customerNotes.setId(10L);
-        customerNotes.setContent("Test content");
-        customerNotes.setCustomer(oldCustomer);
-        customerNotes.setUser(oldUser);
-        customerNotes.setCreatedAt(LocalDateTime.now());
-        customerNotes.setUpdatedAt(LocalDateTime.now());
+        CustomerNote customerNote = new CustomerNote();
+        customerNote.setId(10L);
+        customerNote.setContent("Test content");
+        customerNote.setCustomer(oldCustomer);
+        customerNote.setUser(oldUser);
+        customerNote.setCreatedAt(LocalDateTime.now());
+        customerNote.setUpdatedAt(LocalDateTime.now());
 
-        when(customerNotesRepository.findById(10L)).thenReturn(Optional.of(customerNotes));
+        when(customerNoteRepository.findById(10L)).thenReturn(Optional.of(customerNote));
         when(customerRepository.findById(11L)).thenReturn(Optional.of(newCustomer));
         when(userRepository.findById(22L)).thenReturn(Optional.of(newUser));
-        when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(customerNotes);
+        when(customerNoteRepository.save(any(CustomerNote.class))).thenReturn(customerNote);
 
         CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(11L, 22L, "Updated content");
 
@@ -215,7 +215,7 @@ public class CustomerNoteControllerTest {
     @Test
     void updateCustomerNotes_failure_noCustomerNotes() throws Exception {
 
-        when(customerNotesRepository.findById(10L)).thenReturn(Optional.empty());
+        when(customerNoteRepository.findById(10L)).thenReturn(Optional.empty());
 
         CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(
                 1L,
@@ -240,17 +240,17 @@ public class CustomerNoteControllerTest {
         User newUser = new User();
         newUser.setId(22L);
 
-        CustomerNotes customerNotes = new CustomerNotes();
-        customerNotes.setId(10L);
-        customerNotes.setContent("Test content");
-        customerNotes.setCustomer(oldCustomer);
-        customerNotes.setUser(oldUser);
-        customerNotes.setCreatedAt(LocalDateTime.now());
-        customerNotes.setUpdatedAt(LocalDateTime.now());
+        CustomerNote customerNote = new CustomerNote();
+        customerNote.setId(10L);
+        customerNote.setContent("Test content");
+        customerNote.setCustomer(oldCustomer);
+        customerNote.setUser(oldUser);
+        customerNote.setCreatedAt(LocalDateTime.now());
+        customerNote.setUpdatedAt(LocalDateTime.now());
 
         when(customerRepository.findById(11L)).thenReturn(Optional.empty());
         when(userRepository.findById(22L)).thenReturn(Optional.of(newUser));
-        when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(customerNotes);
+        when(customerNoteRepository.save(any(CustomerNote.class))).thenReturn(customerNote);
 
         CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(
                 11L,
@@ -275,17 +275,17 @@ public class CustomerNoteControllerTest {
         User oldUser = new User();
         oldUser.setId(2L);
 
-        CustomerNotes customerNotes = new CustomerNotes();
-        customerNotes.setId(10L);
-        customerNotes.setContent("Test content");
-        customerNotes.setCustomer(oldCustomer);
-        customerNotes.setUser(oldUser);
-        customerNotes.setCreatedAt(LocalDateTime.now());
-        customerNotes.setUpdatedAt(LocalDateTime.now());
+        CustomerNote customerNote = new CustomerNote();
+        customerNote.setId(10L);
+        customerNote.setContent("Test content");
+        customerNote.setCustomer(oldCustomer);
+        customerNote.setUser(oldUser);
+        customerNote.setCreatedAt(LocalDateTime.now());
+        customerNote.setUpdatedAt(LocalDateTime.now());
 
         when(customerRepository.findById(11L)).thenReturn(Optional.of(newCustomer));
         when(userRepository.findById(22L)).thenReturn(Optional.empty());
-        when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(customerNotes);
+        when(customerNoteRepository.save(any(CustomerNote.class))).thenReturn(customerNote);
 
         CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(
                 11L,
@@ -302,22 +302,22 @@ public class CustomerNoteControllerTest {
     @Test
     void deleteCustomerNotes_success() throws Exception {
 
-        when(customerNotesRepository.existsById(10L)).thenReturn(true);
+        when(customerNoteRepository.existsById(10L)).thenReturn(true);
 
         mockMvc.perform(delete("/api/customer-notes/{id}", 10L))
                 .andExpect(status().isNoContent());
 
-        verify(customerNotesRepository).deleteById(10L);
+        verify(customerNoteRepository).deleteById(10L);
     }
 
     @Test
     void deleteCustomerNotes_failure() throws Exception {
 
-        when(customerNotesRepository.existsById(10L)).thenReturn(false);
+        when(customerNoteRepository.existsById(10L)).thenReturn(false);
 
         mockMvc.perform(delete("/api/customer-notes/{id}", 10L))
                 .andExpect(status().isNotFound());
 
-        verify(customerNotesRepository, never()).deleteById(any());
+        verify(customerNoteRepository, never()).deleteById(any());
     }
 }

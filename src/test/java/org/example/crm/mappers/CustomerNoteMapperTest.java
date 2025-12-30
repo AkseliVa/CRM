@@ -3,7 +3,7 @@ package org.example.crm.mappers;
 import org.example.crm.DTOs.CustomerNoteCreateDTO;
 import org.example.crm.DTOs.CustomerNoteUpdateDTO;
 import org.example.crm.entities.Customer;
-import org.example.crm.entities.CustomerNotes;
+import org.example.crm.entities.CustomerNote;
 import org.example.crm.entities.User;
 import org.junit.jupiter.api.Test;
 
@@ -25,20 +25,20 @@ public class CustomerNoteMapperTest {
 
         CustomerNoteCreateDTO dto = new CustomerNoteCreateDTO(customer.getId(), user.getId(), "test content");
 
-        CustomerNotes customerNotes = CustomerNoteMapper.fromCreateDTO(dto, customer, user);
+        CustomerNote customerNote = CustomerNoteMapper.fromCreateDTO(dto, customer, user);
 
-        assertNotNull(customerNotes);
-        assertEquals(customer, customerNotes.getCustomer());
-        assertEquals(user, customerNotes.getUser());
-        assertEquals("test content", customerNotes.getContent());
+        assertNotNull(customerNote);
+        assertEquals(customer, customerNote.getCustomer());
+        assertEquals(user, customerNote.getUser());
+        assertEquals("test content", customerNote.getContent());
 
-        assertNotNull(customerNotes.getCreatedAt());
-        assertNotNull(customerNotes.getUpdatedAt());
+        assertNotNull(customerNote.getCreatedAt());
+        assertNotNull(customerNote.getUpdatedAt());
     }
 
     @Test
     public void testUpdateDTO() {
-        CustomerNotes notes = new CustomerNotes();
+        CustomerNote note = new CustomerNote();
 
         Customer oldCustomer = new Customer();
         oldCustomer.setId(55L);
@@ -46,10 +46,10 @@ public class CustomerNoteMapperTest {
         User oldUser = new User();
         oldUser.setId(69L);
 
-        notes.setCustomer(oldCustomer);
-        notes.setUser(oldUser);
-        notes.setContent("Old content");
-        notes.setCreatedAt(LocalDateTime.now());
+        note.setCustomer(oldCustomer);
+        note.setUser(oldUser);
+        note.setContent("Old content");
+        note.setCreatedAt(LocalDateTime.now());
 
         Customer newCustomer = new Customer();
         newCustomer.setId(54L);
@@ -59,12 +59,12 @@ public class CustomerNoteMapperTest {
 
         CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(54L, 96L, "New content");
 
-        CustomerNoteMapper.updateEntity(notes, dto, newCustomer, newUser);
+        CustomerNoteMapper.updateEntity(note, dto, newCustomer, newUser);
 
-        assertEquals(newCustomer, notes.getCustomer());
-        assertEquals(newUser, notes.getUser());
-        assertEquals("New content", notes.getContent());
-        assertNotNull(notes.getCreatedAt());
-        assertNotNull(notes.getUpdatedAt());
+        assertEquals(newCustomer, note.getCustomer());
+        assertEquals(newUser, note.getUser());
+        assertEquals("New content", note.getContent());
+        assertNotNull(note.getCreatedAt());
+        assertNotNull(note.getUpdatedAt());
     }
 }

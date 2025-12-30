@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 @Entity
 @Getter
 @Setter
-public class CustomerNotes {
+public class CustomerNote {
 
     @Id
     @GeneratedValue(strategy= GenerationType.AUTO)
@@ -30,9 +30,9 @@ public class CustomerNotes {
 
     private LocalDateTime updatedAt;
 
-    public CustomerNotes() {};
+    public CustomerNote() {};
 
-    public CustomerNotes(Customer customer, User user, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
+    public CustomerNote(Customer customer, User user, String content, LocalDateTime createdAt, LocalDateTime updatedAt) {
         this.customer = customer;
         this.user = user;
         this.content = content;

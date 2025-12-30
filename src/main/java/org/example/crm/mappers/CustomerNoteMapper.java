@@ -4,40 +4,40 @@ import org.example.crm.DTOs.CustomerNoteCreateDTO;
 import org.example.crm.DTOs.CustomerNoteDTO;
 import org.example.crm.DTOs.CustomerNoteUpdateDTO;
 import org.example.crm.entities.Customer;
-import org.example.crm.entities.CustomerNotes;
+import org.example.crm.entities.CustomerNote;
 import org.example.crm.entities.User;
 
 import java.time.LocalDateTime;
 
 public class CustomerNoteMapper {
 
-    public static CustomerNoteDTO toCustomerNoteDTO(CustomerNotes customerNotes) {
+    public static CustomerNoteDTO toCustomerNoteDTO(CustomerNote customerNote) {
         return new CustomerNoteDTO(
-                customerNotes.getId(),
-                customerNotes.getCustomer().getId(),
-                customerNotes.getUser().getId(),
-                customerNotes.getContent(),
-                customerNotes.getCreatedAt(),
-                customerNotes.getUpdatedAt()
+                customerNote.getId(),
+                customerNote.getCustomer().getId(),
+                customerNote.getUser().getId(),
+                customerNote.getContent(),
+                customerNote.getCreatedAt(),
+                customerNote.getUpdatedAt()
         );
     }
 
-    public static CustomerNotes fromCreateDTO(CustomerNoteCreateDTO dto, Customer customer, User user) {
-        CustomerNotes notes = new CustomerNotes();
+    public static CustomerNote fromCreateDTO(CustomerNoteCreateDTO dto, Customer customer, User user) {
+        CustomerNote note = new CustomerNote();
 
-        notes.setCustomer(customer);
-        notes.setUser(user);
-        notes.setContent(dto.content());
-        notes.setCreatedAt(LocalDateTime.now());
-        notes.setUpdatedAt(LocalDateTime.now());
+        note.setCustomer(customer);
+        note.setUser(user);
+        note.setContent(dto.content());
+        note.setCreatedAt(LocalDateTime.now());
+        note.setUpdatedAt(LocalDateTime.now());
 
-        return notes;
+        return note;
     }
 
-    public static void updateEntity(CustomerNotes notes, CustomerNoteUpdateDTO dto, Customer customer, User user) {
-        notes.setCustomer(customer);
-        notes.setUser(user);
-        notes.setContent(dto.content());
-        notes.setUpdatedAt(LocalDateTime.now());
+    public static void updateEntity(CustomerNote note, CustomerNoteUpdateDTO dto, Customer customer, User user) {
+        note.setCustomer(customer);
+        note.setUser(user);
+        note.setContent(dto.content());
+        note.setUpdatedAt(LocalDateTime.now());
     }
 }
