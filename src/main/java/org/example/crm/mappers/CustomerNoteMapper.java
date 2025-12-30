@@ -1,19 +1,18 @@
 package org.example.crm.mappers;
 
-import org.example.crm.DTOs.CustomerCreateDTO;
-import org.example.crm.DTOs.CustomerNotesCreateDTO;
-import org.example.crm.DTOs.CustomerNotesDTO;
-import org.example.crm.DTOs.CustomerNotesUpdateDTO;
+import org.example.crm.DTOs.CustomerNoteCreateDTO;
+import org.example.crm.DTOs.CustomerNoteDTO;
+import org.example.crm.DTOs.CustomerNoteUpdateDTO;
 import org.example.crm.entities.Customer;
 import org.example.crm.entities.CustomerNotes;
 import org.example.crm.entities.User;
 
 import java.time.LocalDateTime;
 
-public class CustomerNotesMapper {
+public class CustomerNoteMapper {
 
-    public static CustomerNotesDTO toCustomerNotesDTO(CustomerNotes customerNotes) {
-        return new CustomerNotesDTO(
+    public static CustomerNoteDTO toCustomerNoteDTO(CustomerNotes customerNotes) {
+        return new CustomerNoteDTO(
                 customerNotes.getId(),
                 customerNotes.getCustomer().getId(),
                 customerNotes.getUser().getId(),
@@ -23,7 +22,7 @@ public class CustomerNotesMapper {
         );
     }
 
-    public static CustomerNotes fromCreateDTO(CustomerNotesCreateDTO dto, Customer customer, User user) {
+    public static CustomerNotes fromCreateDTO(CustomerNoteCreateDTO dto, Customer customer, User user) {
         CustomerNotes notes = new CustomerNotes();
 
         notes.setCustomer(customer);
@@ -35,7 +34,7 @@ public class CustomerNotesMapper {
         return notes;
     }
 
-    public static void updateEntity(CustomerNotes notes, CustomerNotesUpdateDTO dto, Customer customer, User user) {
+    public static void updateEntity(CustomerNotes notes, CustomerNoteUpdateDTO dto, Customer customer, User user) {
         notes.setCustomer(customer);
         notes.setUser(user);
         notes.setContent(dto.content());

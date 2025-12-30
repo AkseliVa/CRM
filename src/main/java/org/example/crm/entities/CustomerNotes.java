@@ -25,6 +25,7 @@ public class CustomerNotes {
 
     private String content;
 
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

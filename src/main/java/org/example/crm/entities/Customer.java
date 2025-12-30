@@ -19,12 +19,14 @@ public class Customer {
     @JoinColumn(name="company_id")
     private Company company;
 
+    @Column(nullable = false)
     private String name;
 
     private String email;
 
     private String phone;
 
+    @Column(updatable = false)
     private LocalDateTime createdAt;
 
     private LocalDateTime updatedAt;

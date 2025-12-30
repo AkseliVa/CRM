@@ -1,7 +1,7 @@
 package org.example.crm.controllers;
 
-import org.example.crm.DTOs.CustomerNotesCreateDTO;
-import org.example.crm.DTOs.CustomerNotesUpdateDTO;
+import org.example.crm.DTOs.CustomerNoteCreateDTO;
+import org.example.crm.DTOs.CustomerNoteUpdateDTO;
 import org.example.crm.entities.Customer;
 import org.example.crm.entities.CustomerNotes;
 import org.example.crm.entities.User;
@@ -26,8 +26,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-@WebMvcTest(CustomerNotesController.class)
-public class CustomerNotesControllerTest {
+@WebMvcTest(CustomerNoteController.class)
+public class CustomerNoteControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
@@ -128,11 +128,11 @@ public class CustomerNotesControllerTest {
         when(userRepository.findById(11L)).thenReturn(Optional.of(user));
         when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(savedCustomerNotes);
 
-        CustomerNotesCreateDTO dto = new CustomerNotesCreateDTO(10L, 11L, "Test content");
+        CustomerNoteCreateDTO dto = new CustomerNoteCreateDTO(10L, 11L, "Test content");
 
         mockMvc.perform(post("/api/customer-notes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.content").value("Test content"))
@@ -149,11 +149,11 @@ public class CustomerNotesControllerTest {
         when(customerRepository.findById(10L)).thenReturn(Optional.empty());
         when(userRepository.findById(11L)).thenReturn(Optional.of(user));
 
-        CustomerNotesCreateDTO dto = new CustomerNotesCreateDTO(10L, 11L, "Test content");
+        CustomerNoteCreateDTO dto = new CustomerNoteCreateDTO(10L, 11L, "Test content");
 
         mockMvc.perform(post("/api/customer-notes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound());
     }
 
@@ -166,11 +166,11 @@ public class CustomerNotesControllerTest {
         when(customerRepository.findById(10L)).thenReturn(Optional.of(customer));
         when(userRepository.findById(11L)).thenReturn(Optional.empty());
 
-        CustomerNotesCreateDTO dto = new CustomerNotesCreateDTO(10L, 11L, "Test content");
+        CustomerNoteCreateDTO dto = new CustomerNoteCreateDTO(10L, 11L, "Test content");
 
         mockMvc.perform(post("/api/customer-notes")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound());
     }
 
@@ -200,11 +200,11 @@ public class CustomerNotesControllerTest {
         when(userRepository.findById(22L)).thenReturn(Optional.of(newUser));
         when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(customerNotes);
 
-        CustomerNotesUpdateDTO dto = new CustomerNotesUpdateDTO(11L, 22L, "Updated content");
+        CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(11L, 22L, "Updated content");
 
         mockMvc.perform(put("/api/customer-notes/{id}", 10L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(10L))
                 .andExpect(jsonPath("$.content").value("Updated content"))
@@ -217,15 +217,15 @@ public class CustomerNotesControllerTest {
 
         when(customerNotesRepository.findById(10L)).thenReturn(Optional.empty());
 
-        CustomerNotesUpdateDTO dto = new CustomerNotesUpdateDTO(
+        CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(
                 1L,
                 2L,
                 "Test content"
         );
 
         mockMvc.perform(put("/api/customer-notes/{id}", 10L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound());
     }
 
@@ -252,15 +252,15 @@ public class CustomerNotesControllerTest {
         when(userRepository.findById(22L)).thenReturn(Optional.of(newUser));
         when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(customerNotes);
 
-        CustomerNotesUpdateDTO dto = new CustomerNotesUpdateDTO(
+        CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(
                 11L,
                 22L,
                 "Updated content"
         );
 
         mockMvc.perform(put("/api/customer-notes/{id}", 10L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound());
     }
 
@@ -287,15 +287,15 @@ public class CustomerNotesControllerTest {
         when(userRepository.findById(22L)).thenReturn(Optional.empty());
         when(customerNotesRepository.save(any(CustomerNotes.class))).thenReturn(customerNotes);
 
-        CustomerNotesUpdateDTO dto = new CustomerNotesUpdateDTO(
+        CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(
                 11L,
                 22L,
                 "Updated content"
         );
 
         mockMvc.perform(put("/api/customer-notes/{id}", 10L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(objectMapper.writeValueAsString(dto)))
                 .andExpect(status().isNotFound());
     }
 

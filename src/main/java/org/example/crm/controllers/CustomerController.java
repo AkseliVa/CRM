@@ -52,7 +52,7 @@ public class CustomerController {
         Customer saved = customerRepository.save(customer);
 
         return ResponseEntity.ok(CustomerMapper.toCustomerDTO(saved));
-    };
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerDTO> updateCustomer(

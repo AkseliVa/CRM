@@ -1,7 +1,7 @@
 package org.example.crm.mappers;
 
-import org.example.crm.DTOs.CustomerNotesCreateDTO;
-import org.example.crm.DTOs.CustomerNotesUpdateDTO;
+import org.example.crm.DTOs.CustomerNoteCreateDTO;
+import org.example.crm.DTOs.CustomerNoteUpdateDTO;
 import org.example.crm.entities.Customer;
 import org.example.crm.entities.CustomerNotes;
 import org.example.crm.entities.User;
@@ -12,7 +12,7 @@ import java.time.LocalDateTime;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
-public class CustomerNotesMapperTest {
+public class CustomerNoteMapperTest {
 
     @Test
     public void testFromCreateDTO() {
@@ -23,9 +23,9 @@ public class CustomerNotesMapperTest {
         user.setId(1L);
 
 
-        CustomerNotesCreateDTO dto = new CustomerNotesCreateDTO(customer.getId(), user.getId(), "test content");
+        CustomerNoteCreateDTO dto = new CustomerNoteCreateDTO(customer.getId(), user.getId(), "test content");
 
-        CustomerNotes customerNotes = CustomerNotesMapper.fromCreateDTO(dto, customer, user);
+        CustomerNotes customerNotes = CustomerNoteMapper.fromCreateDTO(dto, customer, user);
 
         assertNotNull(customerNotes);
         assertEquals(customer, customerNotes.getCustomer());
@@ -57,9 +57,9 @@ public class CustomerNotesMapperTest {
         User newUser = new User();
         newUser.setId(96L);
 
-        CustomerNotesUpdateDTO dto = new CustomerNotesUpdateDTO(54L, 96L, "New content");
+        CustomerNoteUpdateDTO dto = new CustomerNoteUpdateDTO(54L, 96L, "New content");
 
-        CustomerNotesMapper.updateEntity(notes, dto, newCustomer, newUser);
+        CustomerNoteMapper.updateEntity(notes, dto, newCustomer, newUser);
 
         assertEquals(newCustomer, notes.getCustomer());
         assertEquals(newUser, notes.getUser());

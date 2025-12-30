@@ -216,7 +216,7 @@ public class CustomerControllerTest {
     }
 
     @Test
-    void updateTicket_failure_noCompany() throws Exception {
+    void updateCustomer_failure_noCompany() throws Exception {
 
         Company oldCompany = new Company();
         oldCompany.setId(1L);

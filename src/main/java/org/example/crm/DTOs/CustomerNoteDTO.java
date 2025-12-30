@@ -2,7 +2,7 @@ package org.example.crm.DTOs;
 
 import java.time.LocalDateTime;
 
-public record CustomerNotesDTO(
+public record CustomerNoteDTO(
     Long id,
     Long customerId,
     Long userId,

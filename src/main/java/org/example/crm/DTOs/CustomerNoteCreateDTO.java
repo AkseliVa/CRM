@@ -1,6 +1,6 @@
 package org.example.crm.DTOs;
 
-public record CustomerNotesUpdateDTO(
+public record CustomerNoteCreateDTO(
         Long customerId,
         Long userId,
         String content
