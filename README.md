@@ -10,7 +10,7 @@ After my studies, to keep learning and increasing my chances of landing a job in
 - Spring Boot
 - PostgreSQL
 
-## Entities, DTOs, Mappers, Repositories and Controllers
+## Entities, DTOs, Mappers, Repositories, Controllers and Services
 
 The applications funcionalities consist of these entities and their respectful DTOs, Mappers, Repositories and Controllers.
 
@@ -100,15 +100,11 @@ Here is an example of a controller-class
 ```
 package org.example.crm.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.example.crm.DTOs.TicketCreateDTO;
 import org.example.crm.DTOs.TicketDTO;
 import org.example.crm.DTOs.TicketUpdateDTO;
-import org.example.crm.entities.Ticket;
-import org.example.crm.mappers.TicketMapper;
-import org.example.crm.repositories.CompanyRepository;
-import org.example.crm.repositories.CustomerRepository;
-import org.example.crm.repositories.TicketRepository;
-import org.example.crm.repositories.UserRepository;
+import org.example.crm.services.TicketService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -116,109 +112,133 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/tickets")
+@RequiredArgsConstructor
 public class TicketController {
+
+    private final TicketService ticketService;
+
+    @GetMapping
+    public List<TicketDTO> getTickets() {
+        return ticketService.getAllTickets();
+    };
+
+    @GetMapping("/{id}")
+    public ResponseEntity<TicketDTO> getTicket(@PathVariable Long id) {
+        return ResponseEntity.ok(ticketService.getTicketById(id));
+    };
+
+    @PostMapping
+    public ResponseEntity<TicketDTO> createTicket (@RequestBody TicketCreateDTO dto) {
+        TicketDTO created = ticketService.createTicket(dto);
+        return ResponseEntity.ok(created);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<TicketDTO> updateTicket(@PathVariable Long id, @RequestBody TicketUpdateDTO dto) {
+        return ResponseEntity.ok(ticketService.updateTicket(id, dto));
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteTicket(@PathVariable Long id) {
+        ticketService.deleteTicket(id);
+        return ResponseEntity.noContent().build();
+    }
+}
+
+
+```
+
+The Services contain the logic in the application. They do the actual transforming of entities to DTOs and vice versa. They are also responsible for checking that an incoming DTO's values are correct.
+
+Here is an example of a service class
+
+```
+
+package org.example.crm.services;
+
+import jakarta.transaction.Transactional;
+import lombok.RequiredArgsConstructor;
+import org.example.crm.DTOs.TicketCreateDTO;
+import org.example.crm.DTOs.TicketDTO;
+import org.example.crm.DTOs.TicketUpdateDTO;
+import org.example.crm.entities.Ticket;
+import org.example.crm.exceptions.ResourceNotFoundException;
+import org.example.crm.mappers.TicketMapper;
+import org.example.crm.repositories.CompanyRepository;
+import org.example.crm.repositories.CustomerRepository;
+import org.example.crm.repositories.TicketRepository;
+import org.example.crm.repositories.UserRepository;
+import org.springframework.stereotype.Service;
+
+import java.util.List;
+
+@Service
+@RequiredArgsConstructor
+public class TicketService {
+
     private final TicketRepository ticketRepository;
     private final CompanyRepository companyRepository;
     private final CustomerRepository customerRepository;
     private final UserRepository userRepository;
 
-    public TicketController(TicketRepository ticketRepository, CompanyRepository companyRepository, CustomerRepository customerRepository, UserRepository userRepository) {
-        this.ticketRepository = ticketRepository;
-        this.companyRepository = companyRepository;
-        this.customerRepository = customerRepository;
-        this.userRepository = userRepository;
-    };
-
-    @GetMapping
-    public List<TicketDTO> getTickets() {
-        return ticketRepository.findAll()
-                .stream()
+    public List<TicketDTO> getAllTickets() {
+        return ticketRepository.findAllWithRelations().stream()
                 .map(TicketMapper::toTicketDTO)
                 .toList();
-    };
+    }
 
-    @GetMapping("/{id}")
-    public ResponseEntity<TicketDTO> getTicket(@PathVariable Long id) {
+    public TicketDTO getTicketById(Long id) {
         return ticketRepository.findById(id)
-                .map(t -> ResponseEntity.ok(TicketMapper.toTicketDTO(t)))
-                .orElse(ResponseEntity.notFound().build());
-    };
+                .map(TicketMapper::toTicketDTO)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
+    }
 
-    @PostMapping
-    public ResponseEntity<TicketDTO> createTicket (@RequestBody TicketCreateDTO dto) {
+    @Transactional
+    public TicketDTO createTicket(TicketCreateDTO dto) {
         var company = companyRepository.findById(dto.companyId())
-                .orElse(null);
-        if (company == null) {
-            return ResponseEntity.notFound().build();
-        }
-
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
         var customer = customerRepository.findById(dto.customerId())
-                .orElse(null);
-        if (customer == null) {
-            return ResponseEntity.notFound().build();
-        }
-
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
         var user = userRepository.findById(dto.assignedUserId())
-                .orElse(null);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         Ticket ticket = TicketMapper.fromCreateDTO(dto, company, customer, user);
-
         Ticket saved = ticketRepository.save(ticket);
 
-        return ResponseEntity.ok(TicketMapper.toTicketDTO(saved));
-    };
+        return TicketMapper.toTicketDTO(saved);
+    }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<TicketDTO> updateTicket(@PathVariable Long id, @RequestBody TicketUpdateDTO dto) {
-        Ticket existing = ticketRepository.findById(id).orElse(null);
-        if (existing == null) {
-            return ResponseEntity.notFound().build();
-        }
-
+    @Transactional
+    public TicketDTO updateTicket(Long id, TicketUpdateDTO dto) {
+        Ticket existing = ticketRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Ticket not found"));
         var company = companyRepository.findById(dto.companyId())
-                .orElse(null);
-        if (company == null) {
-            return ResponseEntity.notFound().build();
-        }
-
+                .orElseThrow(() -> new ResourceNotFoundException("Company not found"));
         var customer = customerRepository.findById(dto.customerId())
-                .orElse(null);
-        if (customer == null) {
-            return ResponseEntity.notFound().build();
-        }
-
+                .orElseThrow(() -> new ResourceNotFoundException("Customer not found"));
         var user = userRepository.findById(dto.assignedUserId())
-                .orElse(null);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
+                .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 
         TicketMapper.updateEntity(dto, existing, company, customer, user);
 
         Ticket saved = ticketRepository.save(existing);
 
-        return ResponseEntity.ok(TicketMapper.toTicketDTO(saved));
+        return TicketMapper.toTicketDTO(saved);
     }
 
-    @DeleteMapping("/{id}")
-    public ResponseEntity<?> deleteTicket(@PathVariable Long id) {
-
+    @Transactional
+    public void deleteTicket(Long id) {
         if (!ticketRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
+            throw new ResourceNotFoundException("Ticket not found");
         }
 
         ticketRepository.deleteById(id);
-
-        return ResponseEntity.noContent().build();
     }
 }
 
-```
 
-## Tests
+```
+# Tests
 
 Each entity has their designated test files for functionalitites.
 Currently the tests cover the Mapper-functionality and most of the Controller-functionality with succeeding and failing tests for each endpoint of each controller.
@@ -227,17 +247,12 @@ Currently the tests cover the Mapper-functionality and most of the Controller-fu
 package org.example.crm.controllers;
 
 import org.example.crm.DTOs.TicketCreateDTO;
+import org.example.crm.DTOs.TicketDTO;
 import org.example.crm.DTOs.TicketUpdateDTO;
-import org.example.crm.entities.Company;
-import org.example.crm.entities.Customer;
-import org.example.crm.entities.Ticket;
-import org.example.crm.entities.User;
 import org.example.crm.enums.TicketPriority;
 import org.example.crm.enums.TicketStatus;
-import org.example.crm.repositories.CompanyRepository;
-import org.example.crm.repositories.CustomerRepository;
-import org.example.crm.repositories.TicketRepository;
-import org.example.crm.repositories.UserRepository;
+import org.example.crm.exceptions.ResourceNotFoundException;
+import org.example.crm.services.TicketService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -247,7 +262,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
-import java.util.Optional;
+import java.util.List;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -265,405 +280,163 @@ public class TicketControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private TicketRepository ticketRepository;
-
-    @MockitoBean
-    private CompanyRepository companyRepository;
-
-    @MockitoBean
-    private CustomerRepository customerRepository;
-
-    @MockitoBean
-    private UserRepository userRepository;
+    private TicketService ticketService;
 
     @Test
-    void createTicket_success() throws Exception {
-
-        Company company = new Company();
-        company.setId(1L);
-
-        Customer customer = new Customer();
-        customer.setId(2L);
-
-        User user = new User();
-        user.setId(3L);
-
-        Ticket savedTicket = new Ticket();
-
-        savedTicket.setId(10L);
-        savedTicket.setCustomer(customer);
-        savedTicket.setCompany(company);
-        savedTicket.setAssignedUser(user);
-        savedTicket.setTitle("Test ticket");
-        savedTicket.setDescription("Test description");
-        savedTicket.setStatus(TicketStatus.OPEN);
-        savedTicket.setPriority(TicketPriority.LOW);
-        savedTicket.setCreatedAt(LocalDateTime.now());
-        savedTicket.setUpdatedAt(LocalDateTime.now());
-
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
-        when(customerRepository.findById(2L)).thenReturn(Optional.of(customer));
-        when(userRepository.findById(3L)).thenReturn(Optional.of(user));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(savedTicket);
-
-        TicketCreateDTO dto = new TicketCreateDTO("Test ticket", "Test description", TicketPriority.LOW, TicketStatus.OPEN, 1L, 2L, 3L);
-
-        mockMvc.perform(post("/api/tickets")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(10L))
-                .andExpect(jsonPath("$.title").value("Test ticket"))
-                .andExpect(jsonPath("$.companyId").value(1L))
-                .andExpect(jsonPath("$.customerId").value(2L))
-                .andExpect(jsonPath("$.assignedUserId").value(3L));
-
-    }
-
-    @Test
-    void createTicket_failure_noCompany() throws Exception {
-
-        Customer customer = new Customer();
-        customer.setId(2L);
-
-        User user = new User();
-        user.setId(3L);
-
-        when(companyRepository.findById(1L)).thenReturn(Optional.empty());
-        when(customerRepository.findById(2L)).thenReturn(Optional.of(customer));
-        when(userRepository.findById(3L)).thenReturn(Optional.of(user));
-
-        TicketCreateDTO dto = new TicketCreateDTO(
-                "Test ticket",
+    void getTickets_success() throws Exception {
+        TicketDTO dto = new TicketDTO(
+                1L,
+                "Test Ticket",
                 "Test description",
                 TicketPriority.LOW,
                 TicketStatus.OPEN,
-                1L,
-                2L,
-                3L
+                10L,
+                20L,
+                30L,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        mockMvc.perform(post("/api/tickets")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
+        when(ticketService.getAllTickets()).thenReturn(List.of(dto));
+
+        mockMvc.perform(get("/api/tickets"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$[0].id").value(1L))
+                .andExpect(jsonPath("$[0].title").value("Test Ticket"))
+                .andExpect(jsonPath("$[0].description").value("Test description"));
     }
 
     @Test
-    void createTicket_failure_noCustomer() throws Exception {
-
-        Company company = new Company();
-        company.setId(1L);
-
-        User user = new User();
-        user.setId(3L);
-
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
-        when(customerRepository.findById(2L)).thenReturn(Optional.empty());
-        when(userRepository.findById(3L)).thenReturn(Optional.of(user));
-
-        TicketCreateDTO dto = new TicketCreateDTO(
-                "Test ticket",
-                "Test description",
-                TicketPriority.HIGH,
-                TicketStatus.IN_PROGRESS,
+    void getTicket_success() throws Exception {
+        TicketDTO dto = new TicketDTO(
                 1L,
-                2L,
-                3L
-        );
-
-        mockMvc.perform(post("/api/tickets")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
-
-    }
-
-    @Test
-    void createTicket_failure_noUser() throws Exception {
-        Company company = new Company();
-        company.setId(1L);
-
-        Customer customer = new Customer();
-        customer.setId(2L);
-
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
-        when(customerRepository.findById(2L)).thenReturn(Optional.of(customer));
-        when(userRepository.findById(3L)).thenReturn(Optional.empty());
-
-        TicketCreateDTO dto = new TicketCreateDTO(
-                "Test ticket",
+                "Test Title",
                 "Test description",
                 TicketPriority.LOW,
-                TicketStatus.CLOSED,
-                1L,
-                2L,
-                3L
+                TicketStatus.OPEN,
+                10L,
+                20L,
+                30L,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
+
+        when(ticketService.getTicketById(1L)).thenReturn(dto);
+
+        mockMvc.perform(get("/api/tickets/{id}", 1L))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.title").value("Test Title"))
+                .andExpect(jsonPath("$.description").value("Test description"))
+                .andExpect(jsonPath("$.companyId").value(10L))
+                .andExpect(jsonPath("$.customerId").value(20L))
+                .andExpect(jsonPath("$.assignedUserId").value(30L));
+    }
+
+    @Test
+    void getTicket_failure() throws Exception {
+        when(ticketService.getTicketById(1L))
+                .thenThrow(new ResourceNotFoundException("Ticket not found"));
+
+        mockMvc.perform(get("/api/tickets/{id}", 1L))
+                .andExpect(status().isNotFound());
+    }
+
+    @Test
+    void createTicket_success() throws Exception {
+        TicketCreateDTO createDto = new TicketCreateDTO(
+                "Test Title",
+                "Test description",
+                TicketPriority.LOW,
+                TicketStatus.OPEN,
+                10L,
+                20L,
+                30L
+        );
+        TicketDTO resultDto = new TicketDTO(
+                1L,
+                "Test Title",
+                "Test description",
+                TicketPriority.LOW,
+                TicketStatus.OPEN,
+                10L,
+                20L,
+                30L,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        when(ticketService.createTicket(any(TicketCreateDTO.class))).thenReturn(resultDto);
 
         mockMvc.perform(post("/api/tickets")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
+                .content(objectMapper.writeValueAsString(createDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.title").value("Test Title"))
+                .andExpect(jsonPath("$.companyId").value(10L))
+                .andExpect(jsonPath("$.customerId").value(20L))
+                .andExpect(jsonPath("$.assignedUserId").value(30L));
     }
 
     @Test
     void updateTicket_success() throws Exception {
-
-        Company company = new Company();
-        company.setId(1L);
-        Company newCompany = new Company();
-        newCompany.setId(11L);
-
-        Customer customer = new Customer();
-        customer.setId(2L);
-        Customer newCustomer = new Customer();
-        newCustomer.setId(22L);
-
-        User user = new User();
-        user.setId(3L);
-        User newUser = new User();
-        newUser.setId(33L);
-
-        Ticket ticket = new Ticket();
-
-        ticket.setId(10L);
-        ticket.setTitle("Test ticket");
-        ticket.setDescription("Test description");
-        ticket.setCompany(company);
-        ticket.setCustomer(customer);
-        ticket.setAssignedUser(user);
-        ticket.setPriority(TicketPriority.HIGH);
-        ticket.setStatus(TicketStatus.OPEN);
-        ticket.setCreatedAt(LocalDateTime.now());
-        ticket.setUpdatedAt(LocalDateTime.now());
-
-        when(ticketRepository.findById(10L)).thenReturn(Optional.of(ticket));
-        when(companyRepository.findById(11L)).thenReturn(Optional.of(newCompany));
-        when(customerRepository.findById(22L)).thenReturn(Optional.of(newCustomer));
-        when(userRepository.findById(33L)).thenReturn(Optional.of(newUser));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
-
-        TicketUpdateDTO dto = new TicketUpdateDTO(
-                "Test ticket updated",
-                "Test description updated",
-                TicketPriority.LOW,
-                TicketStatus.CLOSED,
-                11L,
-                22L,
-                33L
-        );
-
-        mockMvc.perform(put("/api/tickets/{id}", 10L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(10L))
-                .andExpect(jsonPath("$.title").value("Test ticket updated"))
-                .andExpect(jsonPath("$.description").value("Test description updated"))
-                .andExpect(jsonPath("$.status").value("CLOSED"))
-                .andExpect(jsonPath("$.priority").value("LOW"))
-                .andExpect(jsonPath("$.companyId").value(11L))
-                .andExpect(jsonPath("$.customerId").value(22L))
-                .andExpect(jsonPath("$.assignedUserId").value(33L));
-    }
-
-    @Test
-    void updateTicket_failure_noTicket() throws Exception {
-
-        when(ticketRepository.findById(10L)).thenReturn(Optional.empty());
-
-        TicketUpdateDTO dto = new TicketUpdateDTO(
-                "Test ticket",
+        TicketUpdateDTO updateDto = new TicketUpdateDTO(
+                "Test title",
                 "Test description",
                 TicketPriority.LOW,
-                TicketStatus.CLOSED,
-                11L,
-                22L,
-                33L
+                TicketStatus.OPEN,
+                10L,
+                20L,
+                30L
         );
-
-        mockMvc.perform(put("/api/tickets/{id}", 10L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void updateTicket_failure_noCompany() throws Exception {
-
-        Company oldCompany = new Company();
-        oldCompany.setId(1L);
-
-        Customer oldCustomer = new Customer();
-        oldCustomer.setId(2L);
-        Customer newCustomer = new Customer();
-        newCustomer.setId(22L);
-
-        User oldUser = new User();
-        oldUser.setId(3L);
-        User newUser = new User();
-        newUser.setId(33L);
-
-        Ticket ticket = new Ticket();
-
-        ticket.setId(10L);
-        ticket.setTitle("Test ticket");
-        ticket.setDescription("Test description");
-        ticket.setPriority(TicketPriority.HIGH);
-        ticket.setStatus(TicketStatus.OPEN);
-        ticket.setCompany(oldCompany);
-        ticket.setCustomer(oldCustomer);
-        ticket.setAssignedUser(oldUser);
-        ticket.setCreatedAt(LocalDateTime.now());
-        ticket.setUpdatedAt(LocalDateTime.now());
-
-        when(ticketRepository.findById(10L)).thenReturn(Optional.of(ticket));
-        when(companyRepository.findById(11L)).thenReturn(Optional.empty());
-        when(customerRepository.findById(22L)).thenReturn(Optional.of(newCustomer));
-        when(userRepository.findById(33L)).thenReturn(Optional.of(newUser));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
-
-        TicketUpdateDTO dto = new TicketUpdateDTO(
-                "Test ticket updated",
-                "Test description updated",
+        TicketDTO resultDto = new TicketDTO(
+                1L,
+                "Test Title",
+                "Test description",
                 TicketPriority.LOW,
-                TicketStatus.CLOSED,
-                11L,
-                22L,
-                33L
+                TicketStatus.OPEN,
+                10L,
+                20L,
+                30L,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
-        mockMvc.perform(put("/api/tickets/{id}", 10L)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
-    }
+        when(ticketService.updateTicket(eq(1L), any(TicketUpdateDTO.class))).thenReturn(resultDto);
 
-    @Test
-    void updateTicket_failure_noCustomer() throws Exception {
-
-        Company oldCompany = new Company();
-        oldCompany.setId(1L);
-        Company newCompany = new Company();
-        newCompany.setId(11L);
-
-        Customer oldCustomer = new Customer();
-        oldCustomer.setId(2L);
-
-        User oldUser = new User();
-        oldUser.setId(33L);
-        User newUser = new User();
-        newUser.setId(33L);
-
-        Ticket ticket = new Ticket();
-
-        ticket.setId(10L);
-        ticket.setTitle("Test ticket");
-        ticket.setDescription("Test description");
-        ticket.setPriority(TicketPriority.HIGH);
-        ticket.setStatus(TicketStatus.OPEN);
-        ticket.setCompany(oldCompany);
-        ticket.setCustomer(oldCustomer);
-        ticket.setAssignedUser(oldUser);
-        ticket.setCreatedAt(LocalDateTime.now());
-        ticket.setUpdatedAt(LocalDateTime.now());
-
-        when(ticketRepository.findById(10L)).thenReturn(Optional.of(ticket));
-        when(companyRepository.findById(11L)).thenReturn(Optional.of(newCompany));
-        when(customerRepository.findById(22L)).thenReturn(Optional.empty());
-        when(userRepository.findById(33L)).thenReturn(Optional.of(newUser));
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
-
-        TicketUpdateDTO dto = new TicketUpdateDTO(
-                "Test ticket updated",
-                "Test description updated",
-                TicketPriority.LOW,
-                TicketStatus.CLOSED,
-                11L,
-                22L,
-                33L
-        );
-
-        mockMvc.perform(put("/api/tickets/{id}", 10L)
+        mockMvc.perform(put("/api/tickets/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
-    }
-
-    @Test
-    void updateTicket_failure_noUser() throws Exception {
-
-        Company oldCompany = new Company();
-        oldCompany.setId(1L);
-        Company newCompany = new Company();
-        newCompany.setId(11L);
-
-        Customer oldCustomer = new Customer();
-        oldCustomer.setId(2L);
-        Customer newCustomer = new Customer();
-        newCustomer.setId(22L);
-
-        User oldUser = new User();
-        oldUser.setId(3L);
-
-        Ticket ticket = new Ticket();
-
-        ticket.setId(10L);
-        ticket.setTitle("Test ticket");
-        ticket.setDescription("Test description");
-        ticket.setPriority(TicketPriority.HIGH);
-        ticket.setStatus(TicketStatus.OPEN);
-        ticket.setCompany(oldCompany);
-        ticket.setCustomer(oldCustomer);
-        ticket.setAssignedUser(oldUser);
-        ticket.setCreatedAt(LocalDateTime.now());
-        ticket.setUpdatedAt(LocalDateTime.now());
-
-        when(ticketRepository.findById(10L)).thenReturn(Optional.of(ticket));
-        when(companyRepository.findById(11L)).thenReturn(Optional.of(newCompany));
-        when(customerRepository.findById(22L)).thenReturn(Optional.of(newCustomer));
-        when(userRepository.findById(33L)).thenReturn(Optional.empty());
-        when(ticketRepository.save(any(Ticket.class))).thenReturn(ticket);
-
-        TicketUpdateDTO dto = new TicketUpdateDTO(
-                "Test ticket updated",
-                "Test description updated",
-                TicketPriority.LOW,
-                TicketStatus.CLOSED,
-                11L,
-                22L,
-                33L
-        );
-
-        mockMvc.perform(put("/api/tickets/{id}", 10L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
+                .content(objectMapper.writeValueAsString(updateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.title").value("Test Title"))
+                .andExpect(jsonPath("$.description").value("Test description"))
+                .andExpect(jsonPath("$.status").value("OPEN"))
+                .andExpect(jsonPath("$.priority").value("LOW"))
+                .andExpect(jsonPath("$.companyId").value(10L))
+                .andExpect(jsonPath("$.customerId").value(20L))
+                .andExpect(jsonPath("$.assignedUserId").value(30L));
     }
 
     @Test
     void deleteTicket_success() throws Exception {
+        doNothing().when(ticketService).deleteTicket(1L);
 
-        when(ticketRepository.existsById(10L)).thenReturn(true);
+        mockMvc.perform(delete("/api/tickets/{id}", 1L))
+                        .andExpect(status().isNoContent());
 
-        mockMvc.perform(delete("/api/tickets/{id}", 10L))
-                .andExpect(status().isNoContent());
-
-        verify(ticketRepository).deleteById(10L);
+        verify(ticketService, times(1)).deleteTicket(1L);
     }
 
     @Test
     void deleteTicket_failure_noTicket() throws Exception {
+        doThrow(new ResourceNotFoundException("Ticket not found")).when(ticketService).deleteTicket(1L);
 
-        when(ticketRepository.existsById(10L)).thenReturn(false);
-
-        mockMvc.perform(delete("/api/tickets/{id}", 10L))
-                .andExpect(status().isNotFound());
-
-        verify(ticketRepository, never()).deleteById(any());
+        mockMvc.perform(delete("/api/tickets/{id}", 1L));
     }
 }
+
 
 
 
