@@ -1,5 +1,6 @@
 package org.example.crm.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.example.crm.DTOs.CustomerNoteCreateDTO;
 import org.example.crm.DTOs.CustomerNoteDTO;
 import org.example.crm.DTOs.CustomerNoteUpdateDTO;
@@ -8,6 +9,7 @@ import org.example.crm.mappers.CustomerNoteMapper;
 import org.example.crm.repositories.CustomerNoteRepository;
 import org.example.crm.repositories.CustomerRepository;
 import org.example.crm.repositories.UserRepository;
+import org.example.crm.services.CustomerNoteService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -15,86 +17,35 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/customer-notes")
+@RequiredArgsConstructor
 public class CustomerNoteController {
-    private final CustomerNoteRepository customerNoteRepository;
-    private final UserRepository userRepository;
-    private final CustomerRepository customerRepository;
 
-    public CustomerNoteController(CustomerNoteRepository customerNoteRepository, UserRepository userRepository, CustomerRepository customerRepository) {
-        this.customerNoteRepository = customerNoteRepository;
-        this.userRepository = userRepository;
-        this.customerRepository = customerRepository;
-    };
+    private final CustomerNoteService customerNoteService;
 
     @GetMapping
     public List<CustomerNoteDTO> getCustomerNotes() {
-        return customerNoteRepository.findAllWithRelations()
-                .stream()
-                .map(CustomerNoteMapper::toCustomerNoteDTO)
-                .toList();
+        return customerNoteService.getAllCustomerNotes();
     };
 
     @GetMapping("/{id}")
     public ResponseEntity<CustomerNoteDTO> getCustomerNotes(@PathVariable Long id) {
-        return customerNoteRepository.findById(id)
-                .map(c -> ResponseEntity.ok(CustomerNoteMapper.toCustomerNoteDTO(c)))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(customerNoteService.getCustomerNoteById(id));
     };
 
     @PostMapping
     public ResponseEntity<CustomerNoteDTO> createCustomerNotes(@RequestBody CustomerNoteCreateDTO dto) {
-        var customer = customerRepository.findById(dto.customerId())
-                .orElse(null);
-        if (customer == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        var user = userRepository.findById(dto.userId())
-                .orElse(null);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        CustomerNote note = CustomerNoteMapper.fromCreateDTO(dto, customer, user);
-
-        CustomerNote saved = customerNoteRepository.save(note);
-
-        return ResponseEntity.ok(CustomerNoteMapper.toCustomerNoteDTO(saved));
+        CustomerNoteDTO created = customerNoteService.createCustomerNote(dto);
+        return ResponseEntity.ok(created);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CustomerNoteDTO> updateCustomerNotes(@PathVariable Long id, @RequestBody CustomerNoteUpdateDTO dto) {
-        CustomerNote existing= customerNoteRepository.findById(id).orElse(null);
-        if (existing == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        var customer = customerRepository.findById(dto.customerId()).orElse(null);
-        if (customer == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        var user = userRepository.findById(dto.userId()).orElse(null);
-        if (user == null) {
-            return ResponseEntity.notFound().build();
-        }
-
-        CustomerNoteMapper.updateEntity(existing, dto, customer, user);
-
-        CustomerNote saved = customerNoteRepository.save(existing);
-
-        return ResponseEntity.ok(CustomerNoteMapper.toCustomerNoteDTO(saved));
+        return ResponseEntity.ok(customerNoteService.updateCustomerNote(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCustomerNotes(@PathVariable Long id) {
-
-        if (!customerNoteRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        customerNoteRepository.deleteById(id);
-
+        customerNoteService.deleteCustomerNote(id);
         return ResponseEntity.noContent().build();
     }
 }
