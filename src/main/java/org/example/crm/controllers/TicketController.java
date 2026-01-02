@@ -31,7 +31,7 @@ public class TicketController {
     public ResponseEntity<TicketDTO> createTicket (@RequestBody TicketCreateDTO dto) {
         TicketDTO created = ticketService.createTicket(dto);
         return ResponseEntity.ok(created);
-    };
+    }
 
     @PutMapping("/{id}")
     public ResponseEntity<TicketDTO> updateTicket(@PathVariable Long id, @RequestBody TicketUpdateDTO dto) {
