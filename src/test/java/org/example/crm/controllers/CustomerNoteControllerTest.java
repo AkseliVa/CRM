@@ -105,7 +105,7 @@ public class CustomerNoteControllerTest {
 
         mockMvc.perform(post("/api/customer-notes")
                         .contentType(MediaType.APPLICATION_JSON)
-                        .content(objectMapper.writeValueAsString(resultDto)))
+                        .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.content").value("Test content"))
