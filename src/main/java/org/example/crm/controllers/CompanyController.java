@@ -1,11 +1,13 @@
 package org.example.crm.controllers;
 
+import lombok.RequiredArgsConstructor;
 import org.example.crm.DTOs.CompanyCreateDTO;
 import org.example.crm.DTOs.CompanyDTO;
 import org.example.crm.DTOs.CompanyUpdateDTO;
 import org.example.crm.entities.Company;
 import org.example.crm.mappers.CompanyMapper;
 import org.example.crm.repositories.CompanyRepository;
+import org.example.crm.services.CompanyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -13,53 +15,35 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/api/companies")
+@RequiredArgsConstructor
 public class CompanyController {
-    private final CompanyRepository companyRepository;
 
-    public CompanyController(CompanyRepository companyRepository) {
-        this.companyRepository = companyRepository;
-    }
+    private final CompanyService companyService;
 
     @GetMapping
     public List<CompanyDTO> getCompanies() {
-        return companyRepository.findAll().stream()
-                .map(CompanyMapper::toDTO)
-                .toList();
+        return companyService.getAllCompanies();
     }
 
     @GetMapping("/{id}")
     public ResponseEntity<CompanyDTO> getCompany(@PathVariable Long id) {
-        return companyRepository.findById(id)
-                .map(c -> ResponseEntity.ok(CompanyMapper.toDTO(c)))
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(companyService.getCompanyById(id));
     }
 
     @PostMapping
     public ResponseEntity<CompanyDTO> createCompany(@RequestBody CompanyCreateDTO dto) {
-        Company created = companyRepository.save(CompanyMapper.fromCreateDTO(dto));
-        return ResponseEntity.ok(CompanyMapper.toDTO(created));
+        CompanyDTO created = companyService.createCompany(dto);
+        return ResponseEntity.ok(created);
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<CompanyDTO> updateCompany(@PathVariable Long id, @RequestBody CompanyUpdateDTO dto) {
-        return companyRepository.findById(id)
-                .map(existing -> {
-                    CompanyMapper.updateEntity(existing, dto);
-                    Company saved = companyRepository.save(existing);
-                    return ResponseEntity.ok(CompanyMapper.toDTO(saved));
-                })
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(companyService.updateCompany(id, dto));
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<?> deleteCompany(@PathVariable Long id) {
-
-        if (!companyRepository.existsById(id)) {
-            return ResponseEntity.notFound().build();
-        }
-
-        companyRepository.deleteById(id);
-
+        companyService.deleteCompany(id);
         return ResponseEntity.noContent().build();
     }
 }
