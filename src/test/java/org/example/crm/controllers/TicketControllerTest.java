@@ -3,17 +3,9 @@ package org.example.crm.controllers;
 import org.example.crm.DTOs.TicketCreateDTO;
 import org.example.crm.DTOs.TicketDTO;
 import org.example.crm.DTOs.TicketUpdateDTO;
-import org.example.crm.entities.Company;
-import org.example.crm.entities.Customer;
-import org.example.crm.entities.Ticket;
-import org.example.crm.entities.User;
 import org.example.crm.enums.TicketPriority;
 import org.example.crm.enums.TicketStatus;
 import org.example.crm.exceptions.ResourceNotFoundException;
-import org.example.crm.repositories.CompanyRepository;
-import org.example.crm.repositories.CustomerRepository;
-import org.example.crm.repositories.TicketRepository;
-import org.example.crm.repositories.UserRepository;
 import org.example.crm.services.TicketService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -25,7 +17,6 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;

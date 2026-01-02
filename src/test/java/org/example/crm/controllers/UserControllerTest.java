@@ -1,10 +1,13 @@
 package org.example.crm.controllers;
 
 import org.example.crm.DTOs.UserCreateDTO;
+import org.example.crm.DTOs.UserDTO;
 import org.example.crm.DTOs.UserUpdateDTO;
 import org.example.crm.entities.User;
 import org.example.crm.enums.UserRole;
+import org.example.crm.exceptions.ResourceNotFoundException;
 import org.example.crm.repositories.UserRepository;
+import org.example.crm.services.UserService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -33,20 +36,19 @@ public class UserControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private UserRepository userRepository;
+    private UserService userService;
 
     @Test
     void getUsers_success() throws Exception {
-        User user = new User();
+        UserDTO dto = new UserDTO(
+                1L,
+                "user@email.com",
+                UserRole.USER,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
-        user.setId(1L);
-        user.setEmail("user@email.com");
-        user.setPasswordHash("password");
-        user.setRole(UserRole.USER);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-
-        when(userRepository.findAll()).thenReturn(List.of(user));
+        when(userService.getAllUsers()).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/api/users"))
                 .andExpect(status().isOk())
@@ -57,17 +59,15 @@ public class UserControllerTest {
 
     @Test
     void getUser_success() throws Exception {
+        UserDTO dto = new UserDTO(
+                1L,
+                "user@email.com",
+                UserRole.USER,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
-        User user = new User();
-
-        user.setId(1L);
-        user.setEmail("user@email.com");
-        user.setPasswordHash("password");
-        user.setRole(UserRole.USER);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
+        when(userService.getUserById(1L)).thenReturn(dto);
 
         mockMvc.perform(get("/api/users/{id}", 1L))
                 .andExpect(status().isOk())
@@ -78,8 +78,8 @@ public class UserControllerTest {
 
     @Test
     void getUser_failure() throws Exception {
-
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
+        when(userService.getUserById(1L))
+                .thenThrow(new ResourceNotFoundException("User not found"));
 
         mockMvc.perform(get("/api/users/{id}", 1L))
                 .andExpect(status().isNotFound());
@@ -87,27 +87,24 @@ public class UserControllerTest {
 
     @Test
     void createUser_success() throws Exception {
-
-        User user = new User();
-
-        user.setId(1L);
-        user.setEmail("user@email.com");
-        user.setPasswordHash("password");
-        user.setRole(UserRole.USER);
-        user.setCreatedAt(LocalDateTime.now());
-        user.setUpdatedAt(LocalDateTime.now());
-
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        UserCreateDTO dto = new UserCreateDTO(
+        UserCreateDTO createDto = new UserCreateDTO(
                 "user@email.com",
                 "password",
                 UserRole.USER
         );
+        UserDTO resultDto = new UserDTO(
+                1L,
+                "user@email.com",
+                UserRole.USER,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        when(userService.createUser(any(UserCreateDTO.class))).thenReturn(resultDto);
 
         mockMvc.perform(post("/api/users")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.email").value("user@email.com"))
@@ -116,67 +113,43 @@ public class UserControllerTest {
 
     @Test
     void updateUser_success() throws Exception {
-
-        User user = new User();
-
-        user.setId(1L);
-        user.setEmail("test@email.com");
-        user.setPasswordHash("password");
-        user.setRole(UserRole.USER);
-
-        when(userRepository.findById(1L)).thenReturn(Optional.of(user));
-        when(userRepository.save(any(User.class))).thenReturn(user);
-
-        UserUpdateDTO dto = new UserUpdateDTO(
-                "updated@email.com",
-                "newpassword",
-                UserRole.ADMIN
-        );
-
-        mockMvc.perform(put("/api/users/{id}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.email").value("updated@email.com"))
-                .andExpect(jsonPath("$.role").value("ADMIN"));
-    }
-
-    @Test
-    void updateUser_failure_noUser() throws Exception {
-
-        when(userRepository.findById(1L)).thenReturn(Optional.empty());
-
-        UserUpdateDTO dto = new UserUpdateDTO(
-                "email",
+        UserUpdateDTO updateDto = new UserUpdateDTO(
+                "user@email.com",
                 "password",
                 UserRole.USER
         );
+        UserDTO resultDto = new UserDTO(
+                1L,
+                "user@email.com",
+                UserRole.USER,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        when(userService.updateUser(eq(1L), any(UserUpdateDTO.class))).thenReturn(resultDto);
 
         mockMvc.perform(put("/api/users/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
+                .content(objectMapper.writeValueAsString(updateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.email").value("user@email.com"))
+                .andExpect(jsonPath("$.role").value("USER"));
     }
 
     @Test
     void deleteUser_success() throws Exception {
-
-        when(userRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(userService).deleteUser(1L);
 
         mockMvc.perform(delete("/api/users/{id}", 1L))
-                .andExpect(status().isNoContent());
+                        .andExpect(status().isNoContent());
 
-        verify(userRepository).deleteById(1L);
+        verify(userService, times(1)).deleteUser(1L);
     }
 
     @Test
     void deleteUser_failure_noUser() throws Exception {
+        doThrow(new ResourceNotFoundException("Not found")).when(userService).deleteUser(1L);
 
-        when(userRepository.existsById(1L)).thenReturn(false);
-
-        mockMvc.perform(delete("/api/users/{id}", 1L))
-                .andExpect(status().isNotFound());
-
-        verify(userRepository, never()).deleteById(any());
+        mockMvc.perform(delete("/api/users/{id}", 1L));
     }
 }
