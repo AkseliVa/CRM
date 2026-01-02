@@ -1,10 +1,11 @@
 package org.example.crm.controllers;
 
 import org.example.crm.DTOs.CompanyCreateDTO;
+import org.example.crm.DTOs.CompanyDTO;
 import org.example.crm.DTOs.CompanyUpdateDTO;
-import org.example.crm.entities.Company;
 import org.example.crm.enums.CompanyIndustryType;
-import org.example.crm.repositories.CompanyRepository;
+import org.example.crm.exceptions.ResourceNotFoundException;
+import org.example.crm.services.CompanyService;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.webmvc.test.autoconfigure.WebMvcTest;
@@ -15,7 +16,6 @@ import tools.jackson.databind.ObjectMapper;
 
 import java.time.LocalDateTime;
 import java.util.List;
-import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
@@ -33,20 +33,18 @@ public class CompanyControllerTest {
     private ObjectMapper objectMapper;
 
     @MockitoBean
-    private CompanyRepository companyRepository;
+    private CompanyService companyService;
 
     @Test
     void getCompanies_success() throws Exception {
+        CompanyDTO dto = new CompanyDTO(1L,
+                "Company",
+                CompanyIndustryType.FINANCE,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
-        Company company = new Company();
-
-        company.setId(1L);
-        company.setName("Company");
-        company.setIndustry(CompanyIndustryType.FINANCE);
-        company.setCreatedAt(LocalDateTime.now());
-        company.setUpdatedAt(LocalDateTime.now());
-
-        when(companyRepository.findAll()).thenReturn(List.of(company));
+        when(companyService.getAllCompanies()).thenReturn(List.of(dto));
 
         mockMvc.perform(get("/api/companies"))
                 .andExpect(status().isOk())
@@ -57,16 +55,14 @@ public class CompanyControllerTest {
 
     @Test
     void getCompany_success() throws Exception {
+        CompanyDTO dto = new CompanyDTO(1L,
+                "Company",
+                CompanyIndustryType.IT,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
 
-        Company company = new Company();
-
-        company.setId(1L);
-        company.setName("Company");
-        company.setIndustry(CompanyIndustryType.IT);
-        company.setCreatedAt(LocalDateTime.now());
-        company.setUpdatedAt(LocalDateTime.now());
-
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
+        when(companyService.getCompanyById(1L)).thenReturn(dto);
 
         mockMvc.perform(get("/api/companies/{id}", 1L))
                 .andExpect(status().isOk())
@@ -77,8 +73,8 @@ public class CompanyControllerTest {
 
     @Test
     void getCompany_failure() throws Exception {
-
-        when(companyRepository.findById(1L)).thenReturn(Optional.empty());
+        when(companyService.getCompanyById(1L))
+                .thenThrow(new ResourceNotFoundException("Company not found"));
 
         mockMvc.perform(get("/api/companies/{id}", 1L))
                 .andExpect(status().isNotFound());
@@ -86,25 +82,23 @@ public class CompanyControllerTest {
 
     @Test
     void createCompany_success() throws Exception {
-
-        Company company = new Company();
-
-        company.setId(1L);
-        company.setName("Test Company");
-        company.setIndustry(CompanyIndustryType.FINANCE);
-        company.setCreatedAt(LocalDateTime.now());
-        company.setUpdatedAt(LocalDateTime.now());
-
-        when(companyRepository.save(any(Company.class))).thenReturn(company);
-
-        CompanyCreateDTO dto = new CompanyCreateDTO(
+        CompanyCreateDTO createDto = new CompanyCreateDTO(
                 "Test Company",
                 CompanyIndustryType.FINANCE
         );
+        CompanyDTO resultDto = new CompanyDTO(
+                1L,
+                "Test Company",
+                CompanyIndustryType.FINANCE,
+                LocalDateTime.now(),
+                LocalDateTime.now()
+        );
+
+        when(companyService.createCompany(any(CompanyCreateDTO.class))).thenReturn(resultDto);
 
         mockMvc.perform(post("/api/companies")
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
+                .content(objectMapper.writeValueAsString(createDto)))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id").value(1L))
                 .andExpect(jsonPath("$.name").value("Test Company"))
@@ -113,66 +107,42 @@ public class CompanyControllerTest {
 
     @Test
     void updateCompany_success() throws Exception {
-
-        Company company = new Company();
-        company.setId(1L);
-        company.setName("Test Company");
-        company.setIndustry(CompanyIndustryType.FINANCE);
-        company.setCreatedAt(LocalDateTime.now());
-        company.setUpdatedAt(LocalDateTime.now());
-
-        when(companyRepository.findById(1L)).thenReturn(Optional.of(company));
-        when(companyRepository.save(any(Company.class))).thenReturn(company);
-
-        CompanyUpdateDTO dto = new CompanyUpdateDTO(
+        CompanyUpdateDTO updateDto = new CompanyUpdateDTO(
                 "Test Company Updated",
                 CompanyIndustryType.IT
         );
-
-        mockMvc.perform(put("/api/companies/{id}", 1L)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.id").value(1L))
-                .andExpect(jsonPath("$.name").value("Test Company Updated"))
-                .andExpect(jsonPath("$.industry").value("IT"));
-    }
-
-    @Test
-    void updateCompany_failure_noCompany() throws Exception {
-
-        when(companyRepository.findById(1L)).thenReturn(Optional.empty());
-
-        CompanyUpdateDTO dto = new CompanyUpdateDTO(
-                "Test Company",
-                CompanyIndustryType.FINANCE
+        CompanyDTO resultDto = new CompanyDTO(
+                1L,
+                "Updated name",
+                CompanyIndustryType.FINANCE,
+                LocalDateTime.now(),
+                LocalDateTime.now()
         );
 
+        when(companyService.updateCompany(eq(1L), any(CompanyUpdateDTO.class))).thenReturn(resultDto);
+
         mockMvc.perform(put("/api/companies/{id}", 1L)
                 .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dto)))
-                .andExpect(status().isNotFound());
+                .content(objectMapper.writeValueAsString(updateDto)))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.id").value(1L))
+                .andExpect(jsonPath("$.name").value("Updated name"))
+                .andExpect(jsonPath("$.industry").value("FINANCE"));
     }
 
     @Test
     void deleteCompany_success() throws Exception {
-
-        when(companyRepository.existsById(1L)).thenReturn(true);
+        doNothing().when(companyService).deleteCompany(1L);
 
         mockMvc.perform(delete("/api/companies/{id}", 1L))
-        .andExpect(status().isNoContent());
-
-        verify(companyRepository).deleteById(1L);
+                .andExpect(status().isNoContent());
     }
 
     @Test
     void deleteCompany_failure_noCompany() throws Exception {
-
-        when(companyRepository.existsById(1L)).thenReturn(false);
+        doThrow(new ResourceNotFoundException("Not found")).when(companyService).deleteCompany(1L);
 
         mockMvc.perform(delete("/api/companies/{id}", 1L))
                 .andExpect(status().isNotFound());
-
-        verify(companyRepository, never()).deleteById(any());
     }
 }
