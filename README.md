@@ -10,6 +10,10 @@ After my studies, to keep learning and increasing my chances of landing a job in
 - Spring Boot
 - PostgreSQL
 
+## API Routes
+
+![API Routes](/src/main/resources/static/swagger-ui.png)
+
 ## Entities, DTOs, Mappers, Repositories, Controllers and Services
 
 The applications funcionalities consist of these entities and their respectful DTOs, Mappers, Repositories and Controllers.
