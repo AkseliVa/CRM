@@ -9,7 +9,6 @@ import org.example.crm.entities.Company;
 import org.example.crm.exceptions.ResourceNotFoundException;
 import org.example.crm.mappers.CompanyMapper;
 import org.example.crm.repositories.CompanyRepository;
-import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import java.util.List;

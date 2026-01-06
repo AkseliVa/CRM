@@ -29,7 +29,7 @@ public class GlobalExceptionHandler {
     public ResponseEntity<ErrorDetails> handleGlobalException(Exception ex, WebRequest req) {
         ErrorDetails errorDetails = new ErrorDetails(
                 LocalDateTime.now(),
-                "Unexpected error occured in the server",
+                "Unexpected error occurred in the server",
                 req.getDescription(false)
         );
 
