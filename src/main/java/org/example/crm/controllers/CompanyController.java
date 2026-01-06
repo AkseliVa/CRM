@@ -1,12 +1,10 @@
 package org.example.crm.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.crm.DTOs.CompanyCreateDTO;
 import org.example.crm.DTOs.CompanyDTO;
 import org.example.crm.DTOs.CompanyUpdateDTO;
-import org.example.crm.entities.Company;
-import org.example.crm.mappers.CompanyMapper;
-import org.example.crm.repositories.CompanyRepository;
 import org.example.crm.services.CompanyService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +29,13 @@ public class CompanyController {
     }
 
     @PostMapping
-    public ResponseEntity<CompanyDTO> createCompany(@RequestBody CompanyCreateDTO dto) {
+    public ResponseEntity<CompanyDTO> createCompany(@Valid @RequestBody CompanyCreateDTO dto) {
         CompanyDTO created = companyService.createCompany(dto);
         return ResponseEntity.ok(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CompanyDTO> updateCompany(@PathVariable Long id, @RequestBody CompanyUpdateDTO dto) {
+    public ResponseEntity<CompanyDTO> updateCompany(@PathVariable Long id, @Valid @RequestBody CompanyUpdateDTO dto) {
         return ResponseEntity.ok(companyService.updateCompany(id, dto));
     }
 

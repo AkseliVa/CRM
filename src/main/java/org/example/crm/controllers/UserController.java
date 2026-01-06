@@ -1,12 +1,10 @@
 package org.example.crm.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.crm.DTOs.UserCreateDTO;
 import org.example.crm.DTOs.UserDTO;
 import org.example.crm.DTOs.UserUpdateDTO;
-import org.example.crm.entities.User;
-import org.example.crm.mappers.UserMapper;
-import org.example.crm.repositories.UserRepository;
 import org.example.crm.services.UserService;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -31,13 +29,13 @@ public class UserController {
     };
 
     @PostMapping
-    public ResponseEntity<UserDTO> createUser(@RequestBody UserCreateDTO dto) {
+    public ResponseEntity<UserDTO> createUser(@Valid @RequestBody UserCreateDTO dto) {
         UserDTO created = userService.createUser(dto);
         return ResponseEntity.ok(created);
     };
 
     @PutMapping("/{id}")
-    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @RequestBody UserUpdateDTO dto) {
+    public ResponseEntity<UserDTO> updateUser(@PathVariable Long id, @Valid @RequestBody UserUpdateDTO dto) {
         return ResponseEntity.ok(userService.updateUser(id, dto));
     }
 

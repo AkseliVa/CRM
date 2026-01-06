@@ -152,7 +152,7 @@ public class CustomerNoteControllerTest {
     }
 
     @Test
-    void deleteCustomerNotes_failure() throws Exception {
+    void deleteCustomerNote_failure() throws Exception {
         doThrow(new ResourceNotFoundException("Not found")).when(customerNoteService).deleteCustomerNote(1L);
 
         mockMvc.perform(delete("/api/customer-notes/{id}", 1L))

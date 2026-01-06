@@ -1,5 +1,6 @@
 package org.example.crm.controllers;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.crm.DTOs.TicketCreateDTO;
 import org.example.crm.DTOs.TicketDTO;
@@ -28,13 +29,13 @@ public class TicketController {
     };
 
     @PostMapping
-    public ResponseEntity<TicketDTO> createTicket (@RequestBody TicketCreateDTO dto) {
+    public ResponseEntity<TicketDTO> createTicket (@Valid @RequestBody TicketCreateDTO dto) {
         TicketDTO created = ticketService.createTicket(dto);
         return ResponseEntity.ok(created);
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<TicketDTO> updateTicket(@PathVariable Long id, @RequestBody TicketUpdateDTO dto) {
+    public ResponseEntity<TicketDTO> updateTicket(@PathVariable Long id, @Valid @RequestBody TicketUpdateDTO dto) {
         return ResponseEntity.ok(ticketService.updateTicket(id, dto));
     }
 
