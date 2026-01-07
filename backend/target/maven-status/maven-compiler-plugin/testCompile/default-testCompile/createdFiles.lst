@@ -1,0 +1,9 @@
+org/example/crm/controllers/CompanyControllerTest.class
+org/example/crm/controllers/CustomerNotesControllerTest.class
+org/example/crm/mappers/CustomerMapperTest.class
+org/example/crm/controllers/UserControllerTest.class
+org/example/crm/controllers/CustomerControllerTest.class
+org/example/crm/mappers/CustomerNotesMapperTest.class
+org/example/crm/controllers/TicketControllerTest.class
+org/example/crm/mappers/TicketMapperTest.class
+org/example/crm/mappers/CompanyMapperTest.class

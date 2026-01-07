@@ -1,0 +1,11 @@
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/CrmApplicationTests.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/controllers/CompanyControllerTest.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/controllers/CustomerControllerTest.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/controllers/CustomerNotesControllerTest.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/controllers/TicketControllerTest.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/controllers/UserControllerTest.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/mappers/CompanyMapperTest.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/mappers/CustomerMapperTest.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/mappers/CustomerNotesMapperTest.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/mappers/TicketMapperTest.java
+/home/boris/IdeaProjects/CRM/src/test/java/org/example/crm/mappers/UserMapperTest.java
