@@ -8,8 +8,8 @@ export default function Companies() {
     }, [])
 
     return (
-        <>
+        <div style={{ marginLeft: '250px', padding: '20px' }}>
             <h1>Companies</h1>
-        </>
+        </div>
     )
 }

@@ -1,6 +1,5 @@
 import ReactDOM from "react-dom/client"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
-import './index.css'
 import Dashboard from "./pages/dashboard/Dashboard.tsx"
 import Companies from "./pages/companies/Companies.tsx"
 import Customers from "./pages/customers/Customers.tsx"
