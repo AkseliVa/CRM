@@ -2,6 +2,10 @@
 
 This is a full-stack CRM application implemented using a monorepo structure. The project contains separate directories for backend and frontend components.
 
+# HOX
+
+Screenshots found in the frontend directorys Readme.md
+
 ## Project Structure
 
 * backend/: Spring Boot (Java 21, Maven) application providing a REST API and connecting to a PostgreSQL database.
