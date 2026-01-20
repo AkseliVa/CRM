@@ -35,7 +35,12 @@ export default function Tickets() {
             ) : (
                 <div className="tickets-list">
                     {tickets.map((t) => (
-                        <div className="ticket-row" key={t.id}>
+                        <div
+                            className="ticket-row"
+                            key={t.id}
+                            onClick={() => navigate(`/tickets/${t.id}`)}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <div className="ticket-title">{t.title}</div>
                             <div className="ticket-meta">{t.priority} · {t.status}</div>
                         </div>

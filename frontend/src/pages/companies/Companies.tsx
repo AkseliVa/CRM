@@ -36,7 +36,12 @@ export default function Companies() {
             ) : (
                 <div className="companies-grid">
                     {companies.map((c) => (
-                        <div className="company-card" key={c.id}>
+                        <div
+                            className="company-card"
+                            key={c.id}
+                            onClick={() => navigate(`/companies/${c.id}`)}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <div className="company-name">{c.name}</div>
                             <div className="company-industry">{c.industry}</div>
                             <div className="company-meta">Created: {new Date(c.createdAt).toLocaleString()}</div>

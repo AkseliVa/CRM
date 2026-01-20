@@ -35,7 +35,12 @@ export default function Users() {
             ) : (
                 <div className="users-list">
                     {users.map((u) => (
-                        <div className="user-row" key={u.id}>
+                        <div
+                            className="user-row"
+                            key={u.id}
+                            onClick={() => navigate(`/users/${u.id}`)}
+                            style={{ cursor: 'pointer' }}
+                        >
                             <div className="user-email">{u.email}</div>
                             <div className="user-role">{u.role}</div>
                         </div>

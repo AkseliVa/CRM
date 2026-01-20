@@ -55,7 +55,12 @@ export default function Customers() {
                             ) : (
                                 <div className="customers-grid">
                                     {group.map((c) => (
-                                        <div className="customer-card" key={c.id}>
+                                        <div
+                                            className="customer-card"
+                                            key={c.id}
+                                            onClick={() => navigate(`/customers/${c.id}`)}
+                                            style={{ cursor: 'pointer' }}
+                                        >
                                             <div className="customer-name">{c.name}</div>
                                             <div className="customer-meta">{c.email} · {c.phone}</div>
                                         </div>
