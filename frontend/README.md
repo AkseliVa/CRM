@@ -83,7 +83,7 @@ Below are screenshots (placeholders) for the main pages in this frontend applica
 | Dashboard | ![Dashboard](public/screenshots/Dashboard.png) |
 | Companies | ![Companies](public/screenshots/Companies.png) |
 | Create Company | ![Create Company](public/screenshots/Company-create.png) |
-| Company Detail | ![Company Detail](public/screenshots/Company-details.png) |
+| Company Detail | ![Company Detail](public/screenshots/Company-detail.png) |
 | Customers | ![Customers](public/screenshots/Customers.png) |
 | Create Customer | ![Create Customer](public/screenshots/Customer-create.png) |
 | Customer Detail | ![Customer Detail](public/screenshots/Customer-details.png) |
@@ -93,5 +93,3 @@ Below are screenshots (placeholders) for the main pages in this frontend applica
 | Users | ![Users](public/screenshots/Users.png) |
 | Create User | ![Create User](public/screenshots/User-create.png) |
 | User Detail | ![User Detail](public/screenshots/User-details.png) |
-
-Note: These are lightweight SVG placeholders created for README preview. Replace them with real screenshots by saving PNG/SVG files to `public/screenshots/` with the same names.
