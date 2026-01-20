@@ -192,11 +192,6 @@ export default function CustomerDetail() {
                 </div>
               )}
             </div>
-          <div style={{ marginTop: 12 }}>
-            <button onClick={() => setEditMode(true)}>Edit</button>
-            <button onClick={onDelete} style={{ marginLeft: 8 }}>Delete</button>
-            <button onClick={() => navigate('/customers')} style={{ marginLeft: 8 }}>Back</button>
-          </div>
         </div>
       ) : (
         <form onSubmit={onSave} className="form">
