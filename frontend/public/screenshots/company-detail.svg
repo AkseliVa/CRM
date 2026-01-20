@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700">
+  <rect width="100%" height="100%" fill="#eef2ff"/>
+  <text x="50%" y="40%" font-size="44" text-anchor="middle" fill="#4338ca" font-family="Arial">Company Details</text>
+  <text x="50%" y="56%" font-size="18" text-anchor="middle" fill="#4338ca">Shows Company info, Customers and Tickets</text>
+</svg>

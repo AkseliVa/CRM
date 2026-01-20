@@ -1,0 +1,5 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="700">
+  <rect width="100%" height="100%" fill="#f8fafc"/>
+  <text x="50%" y="35%" font-size="48" text-anchor="middle" fill="#0f172a" font-family="Arial">Dashboard</text>
+  <text x="50%" y="52%" font-size="20" text-anchor="middle" fill="#475569">Overview: Companies · Customers · Users · Tickets</text>
+</svg>

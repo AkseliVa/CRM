@@ -71,3 +71,27 @@ export default defineConfig([
   },
 ])
 ```
+
+## Screenshots
+
+Below are screenshots (placeholders) for the main pages in this frontend application.
+
+### Overview
+
+| Page | Preview |
+|---|---|
+| Dashboard | ![Dashboard](public/screenshots/dashboard.svg) |
+| Companies | ![Companies](public/screenshots/companies.svg) |
+| Create Company | ![Create Company](public/screenshots/company-create.svg) |
+| Company Detail | ![Company Detail](public/screenshots/company-detail.svg) |
+| Customers | ![Customers](public/screenshots/customers.svg) |
+| Create Customer | ![Create Customer](public/screenshots/customer-create.svg) |
+| Customer Detail | ![Customer Detail](public/screenshots/customer-detail.svg) |
+| Tickets | ![Tickets](public/screenshots/tickets.svg) |
+| Create Ticket | ![Create Ticket](public/screenshots/ticket-create.svg) |
+| Ticket Detail | ![Ticket Detail](public/screenshots/ticket-detail.svg) |
+| Users | ![Users](public/screenshots/users.svg) |
+| Create User | ![Create User](public/screenshots/user-create.svg) |
+| User Detail | ![User Detail](public/screenshots/user-detail.svg) |
+
+Note: These are lightweight SVG placeholders created for README preview. Replace them with real screenshots by saving PNG/SVG files to `public/screenshots/` with the same names.
