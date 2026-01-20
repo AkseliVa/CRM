@@ -1,3 +1,4 @@
+org/example/crm/config/DataInitializer.class
 org/example/crm/entities/Customer.class
 org/example/crm/enums/UserRole.class
 org/example/crm/entities/CustomerNote.class

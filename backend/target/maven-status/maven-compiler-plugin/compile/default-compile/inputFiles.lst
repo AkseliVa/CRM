@@ -15,6 +15,7 @@
 /home/boris/IdeaProjects/crm-monorepo/backend/src/main/java/org/example/crm/DTOs/UserDTO.java
 /home/boris/IdeaProjects/crm-monorepo/backend/src/main/java/org/example/crm/DTOs/UserUpdateDTO.java
 /home/boris/IdeaProjects/crm-monorepo/backend/src/main/java/org/example/crm/WebConfig.java
+/home/boris/IdeaProjects/crm-monorepo/backend/src/main/java/org/example/crm/config/DataInitializer.java
 /home/boris/IdeaProjects/crm-monorepo/backend/src/main/java/org/example/crm/controllers/CompanyController.java
 /home/boris/IdeaProjects/crm-monorepo/backend/src/main/java/org/example/crm/controllers/CustomerController.java
 /home/boris/IdeaProjects/crm-monorepo/backend/src/main/java/org/example/crm/controllers/CustomerNoteController.java
