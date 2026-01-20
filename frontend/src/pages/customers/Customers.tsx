@@ -38,7 +38,7 @@ export default function Customers() {
         <div className="customers-root">
             <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                 <h1>Customers</h1>
-                <button onClick={() => navigate('/customers/new')}>Create Customer</button>
+                <button className="btn-primary" onClick={() => navigate('/customers/new')}>Create Customer</button>
             </div>
             {error && <div className="error">{error}</div>}
             {loading ? (

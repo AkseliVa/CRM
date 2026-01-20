@@ -1,12 +1,13 @@
+
 .companies-root {
   margin-left: 250px;
-  padding: 20px;
+  padding: 28px;
 }
 
 .companies-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 16px;
 }
 
 @media (max-width: 900px) {
@@ -22,29 +23,28 @@
 }
 
 .company-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  padding: 12px;
-  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 16px;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
 }
 
 .company-name {
-  font-weight: 600;
-  margin-bottom: 6px;
+  font-weight: 700;
+  margin-bottom: 8px;
+  font-size: 1.05rem;
 }
 
 .company-industry {
-  font-size: 0.9rem;
-  color: #374151;
+  font-size: 0.95rem;
+  color: var(--muted);
   margin-bottom: 8px;
 }
 
 .company-meta {
-  font-size: 0.8rem;
-  color: #6b7280;
+  font-size: 0.85rem;
+  color: var(--muted);
 }
 
-.error {
-  color: #b91c1c;
-  margin-bottom: 8px;
-}
+.error { color: var(--danger); margin-bottom: 8px; }

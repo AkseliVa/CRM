@@ -26,7 +26,7 @@ export default function Companies() {
         <div className="companies-root">
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <h1>Companies</h1>
-                <button onClick={() => navigate('/companies/new')}>Create Company</button>
+                <button className="btn-primary" onClick={() => navigate('/companies/new')}>Create Company</button>
             </div>
             {error && <div className="error">{error}</div>}
             {loading ? (

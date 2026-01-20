@@ -1,12 +1,12 @@
 .customers-root {
   margin-left: 250px;
-  padding: 20px;
+  padding: 28px;
 }
 
 .customers-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  gap: 16px;
 }
 
 @media (max-width: 900px) {
@@ -22,25 +22,26 @@
 }
 
 .customer-card {
-  background: #fff;
-  border: 1px solid #e5e7eb;
-  padding: 12px;
-  border-radius: 6px;
+  background: var(--surface);
+  border: 1px solid var(--border);
+  padding: 14px;
+  border-radius: var(--radius);
+  box-shadow: var(--card-shadow);
 }
 
 .customer-name {
-  font-weight: 600;
+  font-weight: 700;
   margin-bottom: 6px;
 }
 
 .customer-meta {
-  font-size: 0.9rem;
-  color: #374151;
+  font-size: 0.95rem;
+  color: var(--muted);
 }
 
 .customer-company {
-  font-size: 0.85rem;
-  color: #6b7280;
+  font-size: 0.9rem;
+  color: var(--muted);
 }
 
-.error { color: #b91c1c; margin-bottom: 8px; }
+.error { color: var(--danger); margin-bottom: 8px; }

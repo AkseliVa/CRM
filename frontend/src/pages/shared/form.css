@@ -1,7 +1,10 @@
 .form-root { margin-left: 250px; padding: 20px; }
-.form { display: flex; flex-direction: column; gap: 12px; max-width: 640px; }
-.form label { display: flex; flex-direction: column; gap: 6px; font-size: 0.95rem; }
-.form input, .form select, .form textarea { padding: 8px; border: 1px solid #e5e7eb; border-radius: 4px; }
-.form textarea { min-height: 100px; }
+.form { display: flex; flex-direction: column; gap: 14px; max-width: 720px; }
+.form label { display: flex; flex-direction: column; gap: 8px; font-size: 0.98rem; }
+.form input, .form select, .form textarea { padding: 10px; border: 1px solid var(--border); border-radius: 8px; background: var(--surface); }
+.form textarea { min-height: 120px; }
 .form-actions { display: flex; gap: 8px; }
-.error { color: #b91c1c; }
+.form-actions button { min-width: 92px; }
+.error { color: var(--danger); }
+
+.form-root .page-actions { display:flex; justify-content: flex-end; gap:8px; margin-bottom: 12px }

@@ -25,7 +25,7 @@ export default function Users() {
         <div className="users-root">
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <h1>Users</h1>
-                <button onClick={() => navigate('/users/new')}>Create User</button>
+                <button className="btn-primary" onClick={() => navigate('/users/new')}>Create User</button>
             </div>
             {error && <div className="error">{error}</div>}
             {loading ? (

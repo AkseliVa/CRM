@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react'
+import { useEffect, useState } from 'react'
 import { getCompanies } from '../../api/company_api'
 import { getCustomers } from '../../api/customers_api'
 import { getUsers } from '../../api/users_api'

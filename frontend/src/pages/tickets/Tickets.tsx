@@ -25,7 +25,7 @@ export default function Tickets() {
         <div className="tickets-root">
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
                 <h1>Tickets</h1>
-                <button onClick={() => navigate('/tickets/new')}>Create Ticket</button>
+                <button className="btn-primary" onClick={() => navigate('/tickets/new')}>Create Ticket</button>
             </div>
             {error && <div className="error">{error}</div>}
             {loading ? (
