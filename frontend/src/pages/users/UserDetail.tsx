@@ -1,7 +1,9 @@
 import { useEffect, useState } from 'react'
 import { useParams, useNavigate } from 'react-router-dom'
 import { getUser, updateUser, deleteUser } from '../../api/users_api'
+import { getTickets } from '../../api/tickets_api'
 import type { UserDTO, UserUpdateDTO } from '../../types/users'
+import type { TicketDTO } from '../../types/tickets'
 import '../shared/form.css'
 
 export default function UserDetail() {
@@ -14,6 +16,8 @@ export default function UserDetail() {
   const [role, setRole] = useState<'ADMIN' | 'USER'>('USER')
   const [loading, setLoading] = useState(true)
   const [saving, setSaving] = useState(false)
+  const [userTickets, setUserTickets] = useState<TicketDTO[]>([])
+  const [ticketsLoading, setTicketsLoading] = useState(false)
 
   useEffect(() => {
     if (!id) return
@@ -23,6 +27,18 @@ export default function UserDetail() {
       setRole(u.role)
       setLoading(false)
     }).catch(()=>setLoading(false))
+  }, [id])
+
+  useEffect(() => {
+    if (!id) return
+    setTicketsLoading(true)
+    getTickets()
+      .then((all) => {
+        const list = (all || []).filter((t: TicketDTO) => t.assignedUserId === Number(id))
+        setUserTickets(list)
+      })
+      .catch(() => {})
+      .finally(() => setTicketsLoading(false))
   }, [id])
 
   const onSave = async (e: React.FormEvent) => {
@@ -87,6 +103,24 @@ export default function UserDetail() {
           </div>
         </form>
       )}
+
+      <section style={{ marginTop: 20 }}>
+        <h2>Tickets ({userTickets.length})</h2>
+        {ticketsLoading ? (
+          <div>Loading tickets...</div>
+        ) : userTickets.length === 0 ? (
+          <div>No tickets assigned to this user</div>
+        ) : (
+          <div style={{ display: 'flex', flexDirection: 'column', gap: 8 }}>
+            {userTickets.map((t) => (
+              <div key={t.id} className="ticket-row" style={{ cursor: 'pointer' }} onClick={() => navigate(`/tickets/${t.id}`)}>
+                <div className="ticket-title">{t.title}</div>
+                <div className="ticket-meta">{t.priority} · {t.status}</div>
+              </div>
+            ))}
+          </div>
+        )}
+      </section>
     </div>
   )
 }

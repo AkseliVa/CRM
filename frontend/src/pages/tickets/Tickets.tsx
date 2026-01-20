@@ -72,6 +72,13 @@ export default function Tickets() {
         }
     }
 
+    const statuses: TicketDTO['status'][] = ['OPEN', 'IN_PROGRESS', 'CLOSED']
+    const grouped = tickets.reduce((acc: Record<string, TicketDTO[]>, t) => {
+        acc[t.status] = acc[t.status] || []
+        acc[t.status].push(t)
+        return acc
+    }, {})
+
     return (
         <div className="tickets-root">
             <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
@@ -84,24 +91,28 @@ export default function Tickets() {
             ) : tickets.length === 0 ? (
                 <div>No tickets found</div>
             ) : (
-                <div className="tickets-list">
-                    {tickets.map((t) => (
-                        <div
-                            className="ticket-row"
-                            key={t.id}
-                        >
-                            <div className="ticket-title" onClick={() => navigate(`/tickets/${t.id}`)} style={{ cursor: 'pointer' }}>{t.title}</div>
-                            <div className="ticket-controls">
-                                <select value={t.priority} onChange={(e) => onChangePriority(t, e.target.value as TicketDTO['priority'])} disabled={updatingIds.includes(t.id)}>
-                                    <option value="LOW">LOW</option>
-                                    <option value="MEDIUM">MEDIUM</option>
-                                    <option value="HIGH">HIGH</option>
-                                </select>
-                                <select value={t.status} onChange={(e) => onChangeStatus(t, e.target.value as TicketDTO['status'])} disabled={updatingIds.includes(t.id)}>
-                                    <option value="OPEN">OPEN</option>
-                                    <option value="IN_PROGRESS">IN_PROGRESS</option>
-                                    <option value="CLOSED">CLOSED</option>
-                                </select>
+                <div className="tickets-grid">
+                    {statuses.map((statusKey) => (
+                        <div key={statusKey} className="status-column">
+                            <div className="status-header">{statusKey} ({(grouped[statusKey] || []).length})</div>
+                            <div className="status-list">
+                                {((grouped[statusKey] || []) as TicketDTO[]).map((t) => (
+                                    <div key={t.id} className="ticket-row">
+                                        <div className="ticket-title" onClick={() => navigate(`/tickets/${t.id}`)} style={{ cursor: 'pointer' }}>{t.title}</div>
+                                        <div className="ticket-controls">
+                                            <select value={t.priority} onChange={(e) => onChangePriority(t, e.target.value as TicketDTO['priority'])} disabled={updatingIds.includes(t.id)}>
+                                                <option value="LOW">LOW</option>
+                                                <option value="MEDIUM">MEDIUM</option>
+                                                <option value="HIGH">HIGH</option>
+                                            </select>
+                                            <select value={t.status} onChange={(e) => onChangeStatus(t, e.target.value as TicketDTO['status'])} disabled={updatingIds.includes(t.id)}>
+                                                <option value="OPEN">OPEN</option>
+                                                <option value="IN_PROGRESS">IN_PROGRESS</option>
+                                                <option value="CLOSED">CLOSED</option>
+                                            </select>
+                                        </div>
+                                    </div>
+                                ))}
                             </div>
                         </div>
                     ))}

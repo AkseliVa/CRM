@@ -6,4 +6,17 @@
 
 .ticket-controls { display: flex; gap: 8px; align-items: center; }
 .ticket-controls select { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); }
+
+.tickets-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; align-items: start; }
+.status-column { display: flex; flex-direction: column; gap: 8px; }
+.status-header { font-weight: 700; padding: 6px 8px; background: transparent; }
+.status-list { display: flex; flex-direction: column; gap: 8px; }
+
+@media (max-width: 900px) {
+	.tickets-grid { grid-template-columns: repeat(2, 1fr); }
+}
+
+@media (max-width: 600px) {
+	.tickets-grid { grid-template-columns: 1fr; }
+}
 .error { color: var(--danger); margin-bottom: 8px; }
