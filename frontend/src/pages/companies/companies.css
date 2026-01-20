@@ -1,0 +1,50 @@
+.companies-root {
+  margin-left: 250px;
+  padding: 20px;
+}
+
+.companies-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+@media (max-width: 900px) {
+  .companies-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
+
+@media (max-width: 600px) {
+  .companies-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+.company-card {
+  background: #fff;
+  border: 1px solid #e5e7eb;
+  padding: 12px;
+  border-radius: 6px;
+}
+
+.company-name {
+  font-weight: 600;
+  margin-bottom: 6px;
+}
+
+.company-industry {
+  font-size: 0.9rem;
+  color: #374151;
+  margin-bottom: 8px;
+}
+
+.company-meta {
+  font-size: 0.8rem;
+  color: #6b7280;
+}
+
+.error {
+  color: #b91c1c;
+  margin-bottom: 8px;
+}

@@ -1,24 +1,44 @@
-import { useEffect, useState } from "react"
-import { fetchCompanies } from "../../api/company_api"
-import type { CompanyDTO } from "./companyTypes";
+import { useEffect, useState } from 'react'
+import { getCompanies } from '../../api/company_api'
+import type { CompanyDTO } from '../../types/companies'
+import './companies.css'
 
 export default function Companies() {
-    const [companies, setCompanies] = useState([]);
+    const [companies, setCompanies] = useState<CompanyDTO[]>([])
+    const [loading, setLoading] = useState(true)
+    const [error, setError] = useState<string | null>(null)
 
     useEffect(() => {
-        async function getCompanies() {
-            const data = await fetchCompanies();
-            setCompanies(data);
-        }
-        getCompanies();   
-    }, []);
-
-    const companyObjects = companies.map((company: CompanyDTO) => <li key={company.id}>{company.name}</li>)
+        setLoading(true)
+        getCompanies()
+            .then((data) => setCompanies(data ?? []))
+            .catch((err) => {
+                console.error('Failed to load companies', err)
+                setError('Failed to load companies')
+            })
+            .finally(() => setLoading(false))
+    }, [])
 
     return (
-        <div style={{ marginLeft: '250px', padding: '20px' }}>
+        <div className="companies-root">
             <h1>Companies</h1>
-            <ul>{companyObjects}</ul>
+            {error && <div className="error">{error}</div>}
+            {loading ? (
+                <div>Loading...</div>
+            ) : companies.length === 0 ? (
+                <div>No companies found</div>
+            ) : (
+                <div className="companies-grid">
+                    {companies.map((c) => (
+                        <div className="company-card" key={c.id}>
+                            <div className="company-name">{c.name}</div>
+                            <div className="company-industry">{c.industry}</div>
+                            <div className="company-meta">Created: {new Date(c.createdAt).toLocaleString()}</div>
+                            <div className="company-meta">Updated: {new Date(c.updatedAt).toLocaleString()}</div>
+                        </div>
+                    ))}
+                </div>
+            )}
         </div>
     )
 }

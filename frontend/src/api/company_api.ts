@@ -1,18 +1,34 @@
-import axios from 'axios'
+import api from './http'
 
-const API_BASE_URL: string = import.meta.env.VITE_API_BASE_URL;
+export const getCompanies = async () => {
+    const resp = await api.get('/companies')
+    return resp.data
+}
 
-const api = axios.create({
-    baseURL: API_BASE_URL
-});
+export const getCompany = async (id: number) => {
+    const resp = await api.get(`/companies/${id}`)
+    return resp.data
+}
 
-export async function fetchCompanies() {
-    try {
-        const response = await api.get('/companies')
-        console.log('Companies data:', response.data);
-        return response.data;
-    } catch (error) {
-        console.error('Error fetching companies:', error);
-        throw error;
-    }
-};
+export const createCompany = async (payload: any) => {
+    const resp = await api.post('/companies', payload)
+    return resp.data
+}
+
+export const updateCompany = async (id: number, payload: any) => {
+    const resp = await api.put(`/companies/${id}`, payload)
+    return resp.data
+}
+
+export const deleteCompany = async (id: number) => {
+    const resp = await api.delete(`/companies/${id}`)
+    return resp.data
+}
+
+export default {
+    getCompanies,
+    getCompany,
+    createCompany,
+    updateCompany,
+    deleteCompany,
+}
