@@ -80,18 +80,18 @@ Below are screenshots (placeholders) for the main pages in this frontend applica
 
 | Page | Preview |
 |---|---|
-| Dashboard | ![Dashboard](public/screenshots/dashboard.svg) |
-| Companies | ![Companies](public/screenshots/companies.svg) |
-| Create Company | ![Create Company](public/screenshots/company-create.svg) |
-| Company Detail | ![Company Detail](public/screenshots/company-detail.svg) |
-| Customers | ![Customers](public/screenshots/customers.svg) |
-| Create Customer | ![Create Customer](public/screenshots/customer-create.svg) |
-| Customer Detail | ![Customer Detail](public/screenshots/customer-detail.svg) |
-| Tickets | ![Tickets](public/screenshots/tickets.svg) |
-| Create Ticket | ![Create Ticket](public/screenshots/ticket-create.svg) |
-| Ticket Detail | ![Ticket Detail](public/screenshots/ticket-detail.svg) |
-| Users | ![Users](public/screenshots/users.svg) |
-| Create User | ![Create User](public/screenshots/user-create.svg) |
-| User Detail | ![User Detail](public/screenshots/user-detail.svg) |
+| Dashboard | ![Dashboard](public/screenshots/Dashboard.png) |
+| Companies | ![Companies](public/screenshots/Companies.png) |
+| Create Company | ![Create Company](public/screenshots/Company-create.png) |
+| Company Detail | ![Company Detail](public/screenshots/Company-details.png) |
+| Customers | ![Customers](public/screenshots/Customers.png) |
+| Create Customer | ![Create Customer](public/screenshots/Customer-create.png) |
+| Customer Detail | ![Customer Detail](public/screenshots/Customer-details.png) |
+| Tickets | ![Tickets](public/screenshots/Tickets.png) |
+| Create Ticket | ![Create Ticket](public/screenshots/Ticket-create.png) |
+| Ticket Detail | ![Ticket Detail](public/screenshots/Ticket-details.png) |
+| Users | ![Users](public/screenshots/Users.png) |
+| Create User | ![Create User](public/screenshots/User-create.png) |
+| User Detail | ![User Detail](public/screenshots/User-details.png) |
 
 Note: These are lightweight SVG placeholders created for README preview. Replace them with real screenshots by saving PNG/SVG files to `public/screenshots/` with the same names.
