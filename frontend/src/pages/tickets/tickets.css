@@ -3,4 +3,7 @@
 .ticket-row { display: flex; justify-content: space-between; align-items: center; padding: 12px; background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius); box-shadow: var(--card-shadow); }
 .ticket-title { font-weight: 700; }
 .ticket-meta { font-size: 0.95rem; color: var(--muted); }
+
+.ticket-controls { display: flex; gap: 8px; align-items: center; }
+.ticket-controls select { padding: 6px 8px; border-radius: 6px; border: 1px solid var(--border); background: var(--surface); }
 .error { color: var(--danger); margin-bottom: 8px; }

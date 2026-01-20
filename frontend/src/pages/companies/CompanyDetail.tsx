@@ -114,7 +114,7 @@ export default function CompanyDetail() {
       </section>
 
       <section style={{ marginTop: 20 }}>
-        <h2>Tickets</h2>
+        <h2>Tickets ({tickets.filter((t) => t.companyId === company.id).length})</h2>
         {tickets.filter((t) => t.companyId === company.id).length === 0 ? (
           <div>No tickets for this company</div>
         ) : (

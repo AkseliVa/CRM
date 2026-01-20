@@ -93,9 +93,9 @@ export default function TicketDetail() {
           <div><strong>Description:</strong> {ticket.description}</div>
           <div><strong>Priority:</strong> {ticket.priority}</div>
           <div><strong>Status:</strong> {ticket.status}</div>
-          <div><strong>Company:</strong> {ticket.companyId}</div>
-          <div><strong>Customer:</strong> {ticket.customerId}</div>
-          <div><strong>Assigned User:</strong> {ticket.assignedUserId}</div>
+          <div><strong>Company:</strong> {companies.find(c => c.id === ticket.companyId)?.name ?? ticket.companyId ?? '—'}</div>
+          <div><strong>Customer:</strong> {customers.find(c => c.id === ticket.customerId)?.name ?? ticket.customerId ?? '—'}</div>
+          <div><strong>Assigned User:</strong> {users.find(u => u.id === ticket.assignedUserId)?.email ?? ticket.assignedUserId ?? '—'}</div>
           <div style={{ marginTop: 12 }}>
             <button onClick={() => setEditMode(true)}>Edit</button>
             <button onClick={onDelete} style={{ marginLeft: 8 }}>Delete</button>
