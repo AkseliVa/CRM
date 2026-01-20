@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { getTickets } from '../../api/tickets_api'
 import type { TicketDTO } from '../../types/tickets'
 import './tickets.css'
+import { useNavigate } from 'react-router-dom'
 
 export default function Tickets() {
     const [tickets, setTickets] = useState<TicketDTO[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         setLoading(true)
@@ -21,7 +23,10 @@ export default function Tickets() {
 
     return (
         <div className="tickets-root">
-            <h1>Tickets</h1>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <h1>Tickets</h1>
+                <button onClick={() => navigate('/tickets/new')}>Create Ticket</button>
+            </div>
             {error && <div className="error">{error}</div>}
             {loading ? (
                 <div>Loading...</div>

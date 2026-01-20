@@ -2,9 +2,13 @@ import ReactDOM from "react-dom/client"
 import { BrowserRouter, Routes, Route } from "react-router-dom"
 import Dashboard from "./pages/dashboard/Dashboard.tsx"
 import Companies from "./pages/companies/Companies.tsx"
+import CompanyCreate from "./pages/companies/CompanyCreate.tsx"
 import Customers from "./pages/customers/Customers.tsx"
+import CustomerCreate from "./pages/customers/CustomerCreate.tsx"
 import Tickets from "./pages/tickets/Tickets.tsx"
+import TicketCreate from "./pages/tickets/TicketCreate.tsx"
 import Users from "./pages/users/Users.tsx"
+import UserCreate from "./pages/users/UserCreate.tsx"
 import Sidenav from "./components/Sidenav.tsx"
 
 const root = document.getElementById('root');
@@ -16,9 +20,13 @@ ReactDOM.createRoot(root).render(
     <Routes>
       <Route path="/" element={<Dashboard />} />
       <Route path="/companies" element={<Companies />} />
+      <Route path="/companies/new" element={<CompanyCreate />} />
       <Route path="/customers" element={<Customers />} />
+      <Route path="/customers/new" element={<CustomerCreate />} />
       <Route path="/tickets" element={<Tickets />} />
+      <Route path="/tickets/new" element={<TicketCreate />} />
       <Route path="/users" element={<Users />} />
+      <Route path="/users/new" element={<UserCreate />} />
     </Routes>
   </BrowserRouter>
 )

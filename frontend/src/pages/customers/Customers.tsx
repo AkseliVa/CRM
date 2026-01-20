@@ -2,11 +2,13 @@ import { useEffect, useState } from 'react'
 import { getCustomers } from '../../api/customers_api'
 import type { CustomerDTO } from '../../types/customers'
 import './customers.css'
+import { useNavigate } from 'react-router-dom'
 
 export default function Customers() {
     const [customers, setCustomers] = useState<CustomerDTO[]>([])
     const [loading, setLoading] = useState(true)
     const [error, setError] = useState<string | null>(null)
+    const navigate = useNavigate()
 
     useEffect(() => {
         setLoading(true)
@@ -21,7 +23,10 @@ export default function Customers() {
 
     return (
         <div className="customers-root">
-            <h1>Customers</h1>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <h1>Customers</h1>
+                <button onClick={() => navigate('/customers/new')}>Create Customer</button>
+            </div>
             {error && <div className="error">{error}</div>}
             {loading ? (
                 <div>Loading...</div>

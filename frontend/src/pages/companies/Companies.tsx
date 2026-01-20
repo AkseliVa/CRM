@@ -2,6 +2,7 @@ import { useEffect, useState } from 'react'
 import { getCompanies } from '../../api/company_api'
 import type { CompanyDTO } from '../../types/companies'
 import './companies.css'
+import { useNavigate } from 'react-router-dom'
 
 export default function Companies() {
     const [companies, setCompanies] = useState<CompanyDTO[]>([])
@@ -19,9 +20,14 @@ export default function Companies() {
             .finally(() => setLoading(false))
     }, [])
 
+    const navigate = useNavigate()
+
     return (
         <div className="companies-root">
-            <h1>Companies</h1>
+            <div style={{display: 'flex', justifyContent: 'space-between', alignItems: 'center'}}>
+                <h1>Companies</h1>
+                <button onClick={() => navigate('/companies/new')}>Create Company</button>
+            </div>
             {error && <div className="error">{error}</div>}
             {loading ? (
                 <div>Loading...</div>
