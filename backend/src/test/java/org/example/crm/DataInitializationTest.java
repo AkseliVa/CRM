@@ -27,10 +27,10 @@ class DataInitializationTest {
 
     @Test
     void testDataIsInitialized() {
-        assertThat(userRepository.count()).isEqualTo(3);
-        assertThat(companyRepository.count()).isEqualTo(3);
-        assertThat(customerRepository.count()).isEqualTo(4);
-        assertThat(ticketRepository.count()).isEqualTo(4);
-        assertThat(customerNoteRepository.count()).isEqualTo(3);
+        assertThat(userRepository.count()).isEqualTo(5);
+        assertThat(companyRepository.count()).isEqualTo(5);
+        assertThat(customerRepository.count()).isEqualTo(10);
+        assertThat(ticketRepository.count()).isEqualTo(12);
+        assertThat(customerNoteRepository.count()).isEqualTo(7);
     }
 }
